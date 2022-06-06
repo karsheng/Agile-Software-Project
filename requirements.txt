@@ -1,0 +1,6 @@
+flask
+numpy
+pandas
+python-dotenv
+gunicorn
+plotly
