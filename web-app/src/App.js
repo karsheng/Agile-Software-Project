@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Plot from 'react-plotly.js';
 
 function App() {
-  const [currentTime, setCurrentTime] = useState(0);
-
+  const [vizData, setVizData] = useState({});
   useEffect(() => {
-    fetch('/time').then(res => res.json()).then(data => {
-      setCurrentTime(data.time);
-    });
+    fetch('/viz').then(res => res.json()).then(data =>
+      {
+        setVizData(data)
+      })
   }, []);
 
   return (
     <div className="App">
       <header className="App-header">
-        <p>The current time is {currentTime}.</p>
+        <h1> Welcome to the Sentiment Analysis App</h1>
+        {vizData.data ? (<Plot data={vizData.data} layout={vizData.layout} />) : 'Nothing yet...'}
+        {vizData.data ? (<Plot data={vizData.data} layout={vizData.layout} />) : 'Nothing yet...'}
+
       </header>
     </div>
   );
