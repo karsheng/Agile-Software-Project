@@ -4,11 +4,17 @@ import Plot from 'react-plotly.js';
 
 function App() {
   const [vizData, setVizData] = useState({});
+  const [sentimentData, setSentimentData] = useState({});
+  
   useEffect(() => {
-    fetch('/viz').then(res => res.json()).then(data =>
+    fetch('/api/btc_viz').then(res => res.json()).then(data =>
       {
-        setVizData(data)
-      })
+        setVizData(data);
+      });
+    fetch('/api/btc_sentiment').then(res => res.json()).then(data =>
+      {
+        setSentimentData(data);
+      });
   }, []);
 
   return (
@@ -16,6 +22,8 @@ function App() {
       <header className="App-header">
         <h1> Welcome to the Sentiment Analysis App</h1>
         {vizData.data ? (<Plot data={vizData.data} layout={vizData.layout} />) : 'Nothing yet...'}
+        <br />
+        {sentimentData.data ? (<Plot data={sentimentData.data} layout={sentimentData.layout} />) : 'Nothing yet...'}
       </header>
     </div>
   );
