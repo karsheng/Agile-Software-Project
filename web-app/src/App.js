@@ -16,8 +16,6 @@ function App() {
       <header className="App-header">
         <h1> Welcome to the Sentiment Analysis App</h1>
         {vizData.data ? (<Plot data={vizData.data} layout={vizData.layout} />) : 'Nothing yet...'}
-        {vizData.data ? (<Plot data={vizData.data} layout={vizData.layout} />) : 'Nothing yet...'}
-
       </header>
     </div>
   );
