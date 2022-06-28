@@ -20,7 +20,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1> Welcome to the Sentiment Analysis App</h1>
+        <h1>Money Mood</h1>
         {vizData.data ? (<Plot data={vizData.data} layout={vizData.layout} />) : 'Nothing yet...'}
         <br />
         {sentimentData.data ? (<Plot data={sentimentData.data} layout={sentimentData.layout} />) : 'Nothing yet...'}
