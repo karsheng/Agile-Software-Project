@@ -4,3 +4,5 @@ __pycache__
 data/Bitcoin_tweets.csv
 data/bitcoin_prices.csv
 .env
+fbAdminConfig.json
+fbconfig.json

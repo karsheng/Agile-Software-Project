@@ -9,16 +9,30 @@ import firebase_admin
 import pandas as pd
 import plotly.express as px
 from flask import *
+from dotenv import load_dotenv
 
 from src.utils import get_rise_timestamps
+import os
 
 app = Flask(__name__, static_folder='web-app/build', static_url_path='/')
+
+load_dotenv()
+fb_config = {
+    'apiKey': os.environ['apiKey'],
+    'authDomain': os.environ['authDomain'],
+    'projectId': os.environ['projectId'],
+    'storageBucket': os.environ['storageBucket'],
+    'messagingSenderId': os.environ['messagingSenderId'],
+    'appId': os.environ['appId'],
+    'measurementId': os.environ['measurementId'],
+    'databaseURL': os.environ['databaseURL'],
+}
 
 # Firebase config start
 # Firebase Api credentials for authorization. TODO set them as environment variables instead of passing directly.
 cred = credentials.Certificate('fbAdminConfig.json')
 firebase = firebase_admin.initialize_app(cred)
-pb = pyrebase.initialize_app(json.load(open('fbconfig.json')))
+pb = pyrebase.initialize_app(fb_config)
 
 # Firebase config end
 
