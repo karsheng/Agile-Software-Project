@@ -1,5 +1,5 @@
-import React from 'react';
-import './App.css';
+import React from "react";
+import "./App.css";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
 import Login from "./components/Login";
@@ -8,11 +8,10 @@ import { AuthProvider } from "./Auth";
 import PrivateRoute from "./PrivateRoute";
 
 const Home = () => {
-  return <h1>Hello</h1>
-}
+  return <h1>Hello</h1>;
+};
 
 const App = () => {
-  
   return (
     <AuthProvider>
       <Router>
@@ -25,5 +24,5 @@ const App = () => {
       </Router>
     </AuthProvider>
   );
-}
+};
 export default App;
