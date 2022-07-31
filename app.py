@@ -3,7 +3,7 @@ import json
 import pickle
 import time
 import pyrebase
-from firebase_admin import credentials, auth
+from firebase_admin import credentials, auth, db
 import firebase_admin
 
 import pandas as pd
@@ -11,7 +11,7 @@ import plotly.express as px
 from flask import *
 from dotenv import load_dotenv
 
-from src.utils import get_rise_timestamps
+from src.utils import get_rise_timestamps, get_crash_timestamps
 import os
 
 app = Flask(__name__, static_folder='web-app/build', static_url_path='/')
@@ -31,26 +31,29 @@ fb_config = {
 # Firebase config start
 # Firebase Api credentials for authorization. TODO set them as environment variables instead of passing directly.
 cred = credentials.Certificate('fbAdminConfig.json')
-firebase = firebase_admin.initialize_app(cred)
+firebase_admin.initialize_app(cred, {
+    'databaseURL': os.environ['databaseURL']
+})
+
 pb = pyrebase.initialize_app(fb_config)
 
 # Firebase config end
 
+
 def check_token(f):
     @wraps(f)
-    def wrap(*args,**kwargs):
+    def wrap(*args, **kwargs):
         if not request.headers.get('authorization'):
-            return {'message': 'No token provided'},400
+            return {'message': 'No token provided'}, 400
         try:
             user = auth.verify_id_token(request.headers['authorization'])
-            print(user)
-            print('hello')
             request.user = user
         except Exception as e:
             print(e)
-            return {'message':'Invalid token provided.'},400
+            return {'message': 'Invalid token provided.'}, 400
         return f(*args, **kwargs)
     return wrap
+
 
 @app.route('/api/time')
 @check_token
@@ -58,10 +61,50 @@ def get_current_time():
     return {'time': time.time()}
 
 
+@app.route('/api/price_viz', methods=['GET'])
+@check_token
+def get_product_price_viz():
+    args = request.args
+    product = args.get('product')
+    start = args.get('start')
+    end = args.get('end')
+
+    ref = db.reference(
+        f'/prices/{product}').order_by_child('date').start_at(start).end_at(end)
+    df = pd.DataFrame(ref.get().values())
+    df['date'] = pd.to_datetime(df['date'])
+    df = df.set_index('date')
+
+    threshold = 0.12
+    ts = df.resample('7D').first()
+
+    rise_timestamps = get_rise_timestamps(ts, threshold)
+    crash_timestamps = get_crash_timestamps(ts, threshold)
+
+    fig = px.line(df)
+    for t in rise_timestamps:
+        fig.add_vrect(
+            x0=t, x1=t + pd.Timedelta("7d"),
+            fillcolor="lightgreen", opacity=0.5,
+            layer="below", line_width=0,
+        )
+    for t in crash_timestamps:
+        fig.add_vrect(
+            x0=t, x1=t + pd.Timedelta("7d"),
+            fillcolor="salmon", opacity=0.5,
+            layer="below", line_width=0,
+        )
+    fig.update_yaxes({
+        "title": "Price (USD)"
+    })
+    return json.loads(fig.to_json())
+
+
 @app.route('/api/btc_viz')
 @check_token
 def get_btc_viz():
-    btc_prices = pd.read_csv("data/btc_prices.csv", parse_dates=["Timestamp"]).set_index("Timestamp")
+    btc_prices = pd.read_csv("data/btc_prices.csv",
+                             parse_dates=["Timestamp"]).set_index("Timestamp")
     threshold = 0.10
     ts = btc_prices.resample('7D').first()
 
@@ -83,7 +126,7 @@ def get_btc_sentiment():
     return json.loads(fig.to_json())
 
 
-#Api route to sign up a new user
+# Api route to sign up a new user
 @app.route('/api/signup')
 def signup():
     email = request.form.get('email')
@@ -92,15 +135,15 @@ def signup():
         return {'message': 'Error missing email or password'}, 400
     try:
         user = auth.create_user(
-               email=email,
-               password=password
+            email=email,
+            password=password
         )
         return {'message': f'Successfully created user {user.uid}'}, 200
     except Exception as e:
         return {'message': 'Error creating user'}, 400
 
 
-#Api route to get a new token for a valid user
+# Api route to get a new token for a valid user
 @app.route('/api/signin')
 def signin():
     email = request.form.get('email')
@@ -110,7 +153,8 @@ def signin():
         jwt = user['idToken']
         return {'token': jwt}, 200
     except:
-        return {'message': 'There was an error logging in'},400
+        return {'message': 'There was an error logging in'}, 400
+
 
 @app.route('/api/userinfo')
 @check_token

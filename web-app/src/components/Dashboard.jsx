@@ -85,12 +85,25 @@ function DashboardContent() {
   if (!currentUser) {
     return <Redirect to="/" />;
   }
-  useEffect(() => {
+
+  const getData = () => {
     currentUser.getIdToken().then((token) => {
       const headers = {
         authorization: token,
       };
-      fetch("/api/btc_viz", { headers: headers })
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      start.setHours(22);
+      end.setHours(22);
+
+      const startString = start.toISOString().substring(0, 10);
+      const endString = end.toISOString().substring(0, 10);
+      fetch(
+        `/api/price_viz?product=btc&start=${startString}&end=${endString}`,
+        {
+          headers: headers,
+        }
+      )
         .then((res) => res.json())
         .then((data) => {
           setVizData(data);
@@ -98,6 +111,32 @@ function DashboardContent() {
           setStartDate(dates[0]);
           setEndDate(dates[dates.length - 1]);
         });
+
+      fetch("/api/btc_sentiment", { headers: headers })
+        .then((res) => res.json())
+        .then((data) => {
+          setSentimentData(data);
+        });
+    });
+  };
+
+  useEffect(() => {
+    currentUser.getIdToken().then((token) => {
+      const headers = {
+        authorization: token,
+      };
+
+      fetch(`/api/price_viz?product=btc&start=2021-01-01&end=2022-07-01}`, {
+        headers: headers,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setVizData(data);
+          const dates = data.data[0].x;
+          setStartDate(dates[0]);
+          setEndDate(dates[dates.length - 1]);
+        });
+
       fetch("/api/btc_sentiment", { headers: headers })
         .then((res) => res.json())
         .then((data) => {
@@ -189,7 +228,7 @@ function DashboardContent() {
                 value={startDate}
               />
               <DateSelector label="End" setValue={setEndDate} value={endDate} />
-              <Button size="large" variant="contained">
+              <Button onClick={getData} size="large" variant="contained">
                 Get Data
               </Button>
             </Stack>
