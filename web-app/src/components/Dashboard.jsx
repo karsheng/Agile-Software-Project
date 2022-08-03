@@ -248,6 +248,7 @@ function DashboardContent() {
                       data={priceData.data}
                       useResizeHandler={true}
                       layout={{ ...priceData.layout, autosize: true }}
+                      style={{ width: "100%" }}
                     />
                   ) : (
                     <CircularProgress />
@@ -268,6 +269,7 @@ function DashboardContent() {
                       data={sentimentData.data}
                       useResizeHandler={true}
                       layout={{ ...sentimentData.layout, autosize: true }}
+                      style={{ width: "100%" }}
                     />
                   ) : (
                     <CircularProgress />
