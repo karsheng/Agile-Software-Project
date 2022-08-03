@@ -79,6 +79,7 @@ function DashboardContent() {
   const [sentimentData, setSentimentData] = useState({});
   const [priceLoading, setPriceLoading] = useState(false);
   const [sentimentLoading, setSentimentLoading] = useState(false);
+  const [filteredSentimentData, setFilteredSentimentData] = useState(null);
 
   const d = new Date();
   d.setHours(22);
@@ -91,6 +92,42 @@ function DashboardContent() {
   if (!currentUser) {
     return <Redirect to="/" />;
   }
+
+  const handleRelayout = (e) => {
+    if (sentimentData.data || !sentimentLoading) {
+      const fromDate = e["xaxis.range[0]"];
+      const toDate = e["xaxis.range[1]"];
+      if (fromDate && toDate) {
+        const { data } = sentimentData;
+        const indices = [];
+
+        data.forEach((d) => {
+          const idx = [];
+
+          idx.push(d["customdata"].findIndex((x) => x[0] >= fromDate));
+          idx.push(d["customdata"].findLastIndex((x) => x[0] <= toDate));
+          indices.push(idx);
+        });
+
+        const splicedData = data.map((d, i) => ({
+          ...d,
+          customdata: d["customdata"].slice(indices[i][0], indices[i][1]),
+          hovertext: d["hovertext"].slice(indices[i][0], indices[i][1]),
+          x: d["x"].slice(indices[i][0], indices[i][1]),
+          y: d["y"].slice(indices[i][0], indices[i][1]),
+          marker: {
+            ...d["marker"],
+            size: d["marker"].size.slice(indices[i][0], indices[i][1]),
+          },
+        }));
+
+        setFilteredSentimentData(splicedData);
+      }
+      if (e["xaxis.autorange"] || e["yaxis.autorange"]) {
+        setFilteredSentimentData(sentimentData.data);
+      }
+    }
+  };
 
   const getData = () => {
     currentUser.getIdToken().then((token) => {
@@ -249,6 +286,7 @@ function DashboardContent() {
                       useResizeHandler={true}
                       layout={{ ...priceData.layout, autosize: true }}
                       style={{ width: "100%" }}
+                      onRelayout={handleRelayout}
                     />
                   ) : (
                     <CircularProgress />
@@ -266,7 +304,11 @@ function DashboardContent() {
                 >
                   {sentimentData.data && !sentimentLoading ? (
                     <Plot
-                      data={sentimentData.data}
+                      data={
+                        filteredSentimentData
+                          ? filteredSentimentData
+                          : sentimentData.data
+                      }
                       useResizeHandler={true}
                       layout={{ ...sentimentData.layout, autosize: true }}
                       style={{ width: "100%" }}
