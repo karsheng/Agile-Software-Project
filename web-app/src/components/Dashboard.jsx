@@ -244,7 +244,11 @@ function DashboardContent() {
                   }}
                 >
                   {priceData.data && !priceLoading ? (
-                    <Plot data={priceData.data} layout={priceData.layout} />
+                    <Plot
+                      data={priceData.data}
+                      useResizeHandler={true}
+                      layout={{ ...priceData.layout, autosize: true }}
+                    />
                   ) : (
                     <CircularProgress />
                   )}
@@ -262,7 +266,8 @@ function DashboardContent() {
                   {sentimentData.data && !sentimentLoading ? (
                     <Plot
                       data={sentimentData.data}
-                      layout={sentimentData.layout}
+                      useResizeHandler={true}
+                      layout={{ ...sentimentData.layout, autosize: true }}
                     />
                   ) : (
                     <CircularProgress />
