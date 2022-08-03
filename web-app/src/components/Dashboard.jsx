@@ -75,10 +75,14 @@ const Drawer = styled(MuiDrawer, {
 const mdTheme = createTheme();
 
 function DashboardContent() {
-  const [vizData, setVizData] = useState({});
+  const [priceData, setPriceData] = useState({});
   const [sentimentData, setSentimentData] = useState({});
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+
+  const d = new Date();
+  d.setHours(22);
+  const [endDate, setEndDate] = useState(d.toISOString().substring(0, 10));
+  d.setFullYear(d.getFullYear() - 1);
+  const [startDate, setStartDate] = useState(d.toISOString().substring(0, 10));
   const { currentUser } = useContext(AuthContext);
   const [open, setOpen] = useState(true);
 
@@ -106,13 +110,18 @@ function DashboardContent() {
       )
         .then((res) => res.json())
         .then((data) => {
-          setVizData(data);
+          setPriceData(data);
           const dates = data.data[0].x;
           setStartDate(dates[0]);
           setEndDate(dates[dates.length - 1]);
         });
 
-      fetch("/api/btc_sentiment", { headers: headers })
+      fetch(
+        `/api/sentiment?product=btc&start=${startString}&end=${endString}`,
+        {
+          headers: headers,
+        }
+      )
         .then((res) => res.json())
         .then((data) => {
           setSentimentData(data);
@@ -121,28 +130,7 @@ function DashboardContent() {
   };
 
   useEffect(() => {
-    currentUser.getIdToken().then((token) => {
-      const headers = {
-        authorization: token,
-      };
-
-      fetch(`/api/price_viz?product=btc&start=2021-01-01&end=2022-07-01}`, {
-        headers: headers,
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          setVizData(data);
-          const dates = data.data[0].x;
-          setStartDate(dates[0]);
-          setEndDate(dates[dates.length - 1]);
-        });
-
-      fetch("/api/btc_sentiment", { headers: headers })
-        .then((res) => res.json())
-        .then((data) => {
-          setSentimentData(data);
-        });
-    });
+    getData();
   }, []);
 
   const toggleDrawer = () => {
@@ -236,16 +224,8 @@ function DashboardContent() {
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  {vizData.data ? (
-                    <Plot
-                      data={vizData.data}
-                      layout={{
-                        ...vizData.layout,
-                        xaxis: { rangeslider: { disabled: false } },
-                      }}
-                      config={{ responsive: false }}
-                      onRelayout={(e) => console.log(e)}
-                    />
+                  {priceData.data ? (
+                    <Plot data={priceData.data} layout={priceData.layout} />
                   ) : (
                     <CircularProgress />
                   )}
@@ -256,11 +236,7 @@ function DashboardContent() {
                   {sentimentData.data ? (
                     <Plot
                       data={sentimentData.data}
-                      layout={{
-                        ...sentimentData.layout,
-                        title: "hello",
-                      }}
-                      config={{ responsive: false }}
+                      layout={sentimentData.layout}
                     />
                   ) : (
                     <CircularProgress />
