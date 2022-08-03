@@ -77,6 +77,8 @@ const mdTheme = createTheme();
 function DashboardContent() {
   const [priceData, setPriceData] = useState({});
   const [sentimentData, setSentimentData] = useState({});
+  const [priceLoading, setPriceLoading] = useState(false);
+  const [sentimentLoading, setSentimentLoading] = useState(false);
 
   const d = new Date();
   d.setHours(22);
@@ -102,6 +104,10 @@ function DashboardContent() {
 
       const startString = start.toISOString().substring(0, 10);
       const endString = end.toISOString().substring(0, 10);
+
+      setPriceLoading(true);
+      setSentimentLoading(true);
+
       fetch(
         `/api/price_viz?product=btc&start=${startString}&end=${endString}`,
         {
@@ -114,6 +120,9 @@ function DashboardContent() {
           const dates = data.data[0].x;
           setStartDate(dates[0]);
           setEndDate(dates[dates.length - 1]);
+        })
+        .finally(() => {
+          setPriceLoading(false);
         });
 
       fetch(
@@ -125,6 +134,9 @@ function DashboardContent() {
         .then((res) => res.json())
         .then((data) => {
           setSentimentData(data);
+        })
+        .finally(() => {
+          setSentimentLoading(false);
         });
     });
   };
@@ -223,8 +235,15 @@ function DashboardContent() {
 
             <Grid container spacing={3}>
               <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  {priceData.data ? (
+                <Paper
+                  sx={{
+                    p: 2,
+                    alignItems: "center",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  {priceData.data && !priceLoading ? (
                     <Plot data={priceData.data} layout={priceData.layout} />
                   ) : (
                     <CircularProgress />
@@ -232,8 +251,15 @@ function DashboardContent() {
                 </Paper>
               </Grid>
               <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  {sentimentData.data ? (
+                <Paper
+                  sx={{
+                    p: 2,
+                    alignItems: "center",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  {sentimentData.data && !sentimentLoading ? (
                     <Plot
                       data={sentimentData.data}
                       layout={sentimentData.layout}
