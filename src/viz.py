@@ -54,6 +54,6 @@ def price_polarity_plot(prices: pd.Series, polarity: pd.Series, rise_timestamps:
 
     # Set y-axes titles
     fig.update_yaxes(title_text="price (USD)", secondary_y=False)
-    fig.update_yaxes(title_text="tweets polarity", secondary_y=True)
+    fig.update_yaxes(title_text="polarity", secondary_y=True)
 
     return fig

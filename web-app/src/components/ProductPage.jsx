@@ -20,12 +20,16 @@ import { mainListItems, secondaryListItems } from "./listItems";
 import Plot from "react-plotly.js";
 import { AuthContext } from "../Auth.js";
 import { Redirect } from "react-router";
+import { useParams } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import DateSelector from "./DateSelector";
 import Copyright from "./Copyright";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import TopTweets from "./TopTweets";
+import TwitterIcon from "@mui/icons-material/Twitter";
+import ThumbDownIcon from "@mui/icons-material/ThumbDown";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 
 const drawerWidth = 240;
 
@@ -75,12 +79,13 @@ const Drawer = styled(MuiDrawer, {
 
 const mdTheme = createTheme();
 
-function DashboardContent() {
+const ProductPage = () => {
   const [priceData, setPriceData] = useState({});
   const [sentimentData, setSentimentData] = useState({});
   const [priceLoading, setPriceLoading] = useState(false);
   const [sentimentLoading, setSentimentLoading] = useState(false);
   const [filteredSentimentData, setFilteredSentimentData] = useState(null);
+  const { id: product } = useParams();
 
   const d = new Date();
   d.setHours(22);
@@ -90,23 +95,34 @@ function DashboardContent() {
   const { currentUser } = useContext(AuthContext);
   const [open, setOpen] = useState(true);
 
+  const [fromDate, setFromDate] = useState(startDate);
+  const [toDate, setToDate] = useState(endDate);
+
   if (!currentUser) {
     return <Redirect to="/" />;
+  }
+  const products = ["btc"];
+  if (products.findIndex((p) => p == product) < 0) {
+    return <Redirect to="/error" />;
   }
 
   const handleRelayout = (e) => {
     if (sentimentData.data && !sentimentLoading) {
-      const fromDate = e["xaxis.range[0]"];
-      const toDate = e["xaxis.range[1]"];
-      if (fromDate && toDate) {
+      if (e["xaxis.range[0]"] && e["xaxis.range[1]"]) {
+        setFromDate(e["xaxis.range[0]"]);
+        setToDate(e["xaxis.range[1]"]);
         const { data } = sentimentData;
         const indices = [];
 
         data.forEach((d) => {
           const idx = [];
 
-          idx.push(d["customdata"].findIndex((x) => x[0] >= fromDate));
-          idx.push(d["customdata"].findLastIndex((x) => x[0] <= toDate));
+          idx.push(
+            d["customdata"].findIndex((x) => x[0] >= e["xaxis.range[0]"])
+          );
+          idx.push(
+            d["customdata"].findLastIndex((x) => x[0] <= e["xaxis.range[1]"])
+          );
           indices.push(idx);
         });
 
@@ -124,8 +140,11 @@ function DashboardContent() {
 
         setFilteredSentimentData(splicedData);
       }
+
       if (e["xaxis.autorange"] || e["yaxis.autorange"]) {
         setFilteredSentimentData(sentimentData.data);
+        setFromDate(priceData.layout.xaxis.range[0]);
+        setToDate(priceData.layout.xaxis.range[1]);
       }
     }
   };
@@ -165,7 +184,7 @@ function DashboardContent() {
       setSentimentLoading(true);
 
       fetch(
-        `/api/price_viz?product=btc&start=${startString}&end=${endString}`,
+        `/api/price_viz?product=${product}&start=${startString}&end=${endString}`,
         {
           headers: headers,
         }
@@ -182,7 +201,7 @@ function DashboardContent() {
         });
 
       fetch(
-        `/api/sentiment?product=btc&start=${startString}&end=${endString}`,
+        `/api/sentiment?product=${product}&start=${startString}&end=${endString}`,
         {
           headers: headers,
         }
@@ -329,7 +348,14 @@ function DashboardContent() {
                           : sentimentData.data
                       }
                       useResizeHandler={true}
-                      layout={{ ...sentimentData.layout, autosize: true }}
+                      layout={{
+                        ...sentimentData.layout,
+                        title: `Tweets Sentiment from ${fromDate.substring(
+                          0,
+                          10
+                        )} - ${toDate.substring(0, 10)}`,
+                        autosize: true,
+                      }}
                       style={{ width: "100%" }}
                     />
                   ) : (
@@ -346,7 +372,15 @@ function DashboardContent() {
                 >
                   {sentimentData.data && !sentimentLoading ? (
                     <div>
-                      <h1>Top Negative Tweets</h1>
+                      <Typography
+                        component="h1"
+                        variant="h4"
+                        color="inherit"
+                        noWrap
+                        sx={{ flexGrow: 1 }}
+                      >
+                        Negative Tweets <TwitterIcon /> <ThumbDownIcon />
+                      </Typography>
                       <TopTweets
                         rows={
                           filteredSentimentData
@@ -377,7 +411,15 @@ function DashboardContent() {
                 >
                   {sentimentData.data && !sentimentLoading ? (
                     <div>
-                      <h1>Top Positive Tweets</h1>
+                      <Typography
+                        component="h1"
+                        variant="h4"
+                        color="inherit"
+                        noWrap
+                        sx={{ flexGrow: 1 }}
+                      >
+                        Positive Tweets <TwitterIcon /> <ThumbUpIcon />
+                      </Typography>
                       <TopTweets
                         rows={
                           filteredSentimentData
@@ -406,8 +448,6 @@ function DashboardContent() {
       </Box>
     </ThemeProvider>
   );
-}
+};
 
-export default function Dashboard() {
-  return <DashboardContent />;
-}
+export default ProductPage;
