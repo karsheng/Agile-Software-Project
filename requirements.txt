@@ -8,3 +8,7 @@ tweepy
 pyrebase
 jwt
 firebase-admin
+textblob
+scipy
+ matplotlib
+ 
