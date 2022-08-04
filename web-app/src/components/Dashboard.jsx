@@ -25,6 +25,7 @@ import DateSelector from "./DateSelector";
 import Copyright from "./Copyright";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
+import TopTweets from "./TopTweets";
 
 const drawerWidth = 240;
 
@@ -94,7 +95,7 @@ function DashboardContent() {
   }
 
   const handleRelayout = (e) => {
-    if (sentimentData.data || !sentimentLoading) {
+    if (sentimentData.data && !sentimentLoading) {
       const fromDate = e["xaxis.range[0]"];
       const toDate = e["xaxis.range[1]"];
       if (fromDate && toDate) {
@@ -127,6 +128,24 @@ function DashboardContent() {
         setFilteredSentimentData(sentimentData.data);
       }
     }
+  };
+
+  const getTopTweets = (data) => {
+    const followers = data["customdata"].map((d) => d[1]);
+    const followersSorted = followers.slice().sort((a, b) => a - b);
+    followersSorted.reverse();
+
+    const topTweets = followersSorted.map((x, id) => {
+      const i = followers.findIndex((y) => y === x);
+      return {
+        id: id,
+        text: data["hovertext"][i],
+        followers: followers[i],
+        polarity: data["x"][i],
+      };
+    });
+
+    return topTweets;
   };
 
   const getData = () => {
@@ -315,6 +334,68 @@ function DashboardContent() {
                     />
                   ) : (
                     <CircularProgress />
+                  )}
+                </Paper>
+              </Grid>
+              <Grid item xs={12} md={6} lg={6}>
+                <Paper
+                  sx={{
+                    p: 2,
+                    alignItems: "center",
+                  }}
+                >
+                  {sentimentData.data && !sentimentLoading ? (
+                    <div>
+                      <h1>Top Negative Tweets</h1>
+                      <TopTweets
+                        rows={
+                          filteredSentimentData
+                            ? getTopTweets(filteredSentimentData[2])
+                            : getTopTweets(sentimentData.data[2])
+                        }
+                      />
+                    </div>
+                  ) : (
+                    <Stack
+                      sx={{
+                        alignItems: "center",
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <CircularProgress />
+                    </Stack>
+                  )}
+                </Paper>
+              </Grid>
+              <Grid item xs={12} md={6} lg={6}>
+                <Paper
+                  sx={{
+                    p: 2,
+                    alignItems: "center",
+                  }}
+                >
+                  {sentimentData.data && !sentimentLoading ? (
+                    <div>
+                      <h1>Top Positive Tweets</h1>
+                      <TopTweets
+                        rows={
+                          filteredSentimentData
+                            ? getTopTweets(filteredSentimentData[1])
+                            : getTopTweets(sentimentData.data[1])
+                        }
+                      />
+                    </div>
+                  ) : (
+                    <Stack
+                      sx={{
+                        alignItems: "center",
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <CircularProgress />
+                    </Stack>
                   )}
                 </Paper>
               </Grid>
