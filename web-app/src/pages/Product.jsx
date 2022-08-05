@@ -16,6 +16,9 @@ import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import Layout from "../components/Layout";
 import { productList } from "../constants";
+import Avatar from "@mui/material/Avatar";
+import Divider from "@mui/material/Divider";
+import MessageBar from "../components/MessageBar.jsx";
 
 const Product = () => {
   const [priceData, setPriceData] = useState({});
@@ -24,6 +27,7 @@ const Product = () => {
   const [sentimentLoading, setSentimentLoading] = useState(false);
   const [filteredSentimentData, setFilteredSentimentData] = useState(null);
   const { id: product } = useParams();
+  const productName = productList[product];
 
   const d = new Date();
   d.setHours(22);
@@ -34,6 +38,9 @@ const Product = () => {
 
   const [fromDate, setFromDate] = useState(startDate);
   const [toDate, setToDate] = useState(endDate);
+
+  const [messageBarOpen, setMessageBarOpen] = useState(false);
+  const [message, setMessage] = useState(null);
 
   if (!currentUser) {
     return <Redirect to="/" />;
@@ -46,20 +53,18 @@ const Product = () => {
   const handleRelayout = (e) => {
     if (sentimentData.data && !sentimentLoading) {
       if (e["xaxis.range[0]"] && e["xaxis.range[1]"]) {
-        setFromDate(e["xaxis.range[0]"]);
-        setToDate(e["xaxis.range[1]"]);
+        const fd = e["xaxis.range[0]"];
+        const td = e["xaxis.range[1]"];
+        setFromDate(fd);
+        setToDate(td);
         const { data } = sentimentData;
         const indices = [];
 
         data.forEach((d) => {
           const idx = [];
 
-          idx.push(
-            d["customdata"].findIndex((x) => x[0] >= e["xaxis.range[0]"])
-          );
-          idx.push(
-            d["customdata"].findLastIndex((x) => x[0] <= e["xaxis.range[1]"])
-          );
+          idx.push(d["customdata"].findIndex((x) => x[0] >= fd));
+          idx.push(d["customdata"].findLastIndex((x) => x[0] <= td));
           indices.push(idx);
         });
 
@@ -76,12 +81,19 @@ const Product = () => {
         }));
 
         setFilteredSentimentData(splicedData);
+        setMessage(`${fd.substring(0, 10)} to ${td.substring(0, 10)} selected`);
+        setMessageBarOpen(true);
       }
 
       if (e["xaxis.autorange"] || e["yaxis.autorange"]) {
         setFilteredSentimentData(sentimentData.data);
-        setFromDate(priceData.layout.xaxis.range[0]);
-        setToDate(priceData.layout.xaxis.range[1]);
+        const fd = priceData.layout.xaxis.range[0];
+        const td = priceData.layout.xaxis.range[1];
+
+        setFromDate(fd);
+        setToDate(td);
+        setMessage(`${fd.substring(0, 10)} to ${td.substring(0, 10)} selected`);
+        setMessageBarOpen(true);
       }
     }
   };
@@ -157,8 +169,34 @@ const Product = () => {
     getData();
   }, []);
 
+  const ProductLogo = ({ size }) => {
+    return (
+      <Avatar
+        sx={{ width: size, height: size }}
+        alt={productName}
+        src={`/logos/${product}.png`}
+      />
+    );
+  };
+
+  const Title = () => {
+    return (
+      <Typography
+        component="h1"
+        variant="h6"
+        color="inherit"
+        noWrap
+        sx={{ flexGrow: 1 }}
+      >
+        <Stack direction="row" spacing={1}>
+          <ProductLogo size={30} />
+          <span>{productName} Dashboard</span>
+        </Stack>
+      </Typography>
+    );
+  };
   return (
-    <Layout>
+    <Layout title={<Title />}>
       <Stack sx={{ mb: 2 }} spacing={1} direction="row">
         <DateSelector label="Start" setValue={setStartDate} value={startDate} />
         <DateSelector label="End" setValue={setEndDate} value={endDate} />
@@ -176,11 +214,33 @@ const Product = () => {
               flexDirection: "column",
             }}
           >
+            <Typography
+              component="h2"
+              variant="h5"
+              color="inherit"
+              noWrap
+              sx={{ flexGrow: 1 }}
+            >
+              <Stack direction="row" spacing={1}>
+                <ProductLogo size={30} />
+                <span>{productName} Price & Sentiments</span>
+              </Stack>
+            </Typography>
             {priceData.data && !priceLoading ? (
               <Plot
                 data={priceData.data}
                 useResizeHandler={true}
-                layout={{ ...priceData.layout, autosize: true }}
+                layout={{
+                  ...priceData.layout,
+                  margin: {
+                    l: 50,
+                    r: 50,
+                    b: 50,
+                    t: 30,
+                    pad: 4,
+                  },
+                  autosize: true,
+                }}
                 style={{ width: "100%" }}
                 onRelayout={handleRelayout}
               />
@@ -190,6 +250,17 @@ const Product = () => {
           </Paper>
         </Grid>
         <Grid item xs={12}>
+          <Divider light />
+          <Typography
+            component="h1"
+            variant="h4"
+            color="inherit"
+            noWrap
+            sx={{ flexGrow: 1, p: 2 }}
+          >
+            <TwitterIcon style={{ color: "#00acee" }} fontSize="large" />{" "}
+            Twitter Section
+          </Typography>
           <Paper
             sx={{
               p: 2,
@@ -198,6 +269,22 @@ const Product = () => {
               flexDirection: "column",
             }}
           >
+            <Typography
+              component="h2"
+              variant="h5"
+              color="inherit"
+              noWrap
+              sx={{ flexGrow: 1 }}
+            >
+              <Stack direction="row" spacing={1}>
+                <span>Tweets Sentiment on </span>
+                <ProductLogo size={30} />
+                <span>{` ${productName} from ${fromDate.substring(
+                  0,
+                  10
+                )} - ${toDate.substring(0, 10)}`}</span>
+              </Stack>
+            </Typography>
             {sentimentData.data && !sentimentLoading ? (
               <Plot
                 data={
@@ -208,10 +295,13 @@ const Product = () => {
                 useResizeHandler={true}
                 layout={{
                   ...sentimentData.layout,
-                  title: `Tweets Sentiment from ${fromDate.substring(
-                    0,
-                    10
-                  )} - ${toDate.substring(0, 10)}`,
+                  margin: {
+                    l: 50,
+                    r: 50,
+                    b: 50,
+                    t: 30,
+                    pad: 4,
+                  },
                   autosize: true,
                 }}
                 style={{ width: "100%" }}
@@ -228,17 +318,17 @@ const Product = () => {
               alignItems: "center",
             }}
           >
+            <Typography
+              component="h2"
+              variant="h5"
+              color="inherit"
+              noWrap
+              sx={{ flexGrow: 1, p: 2 }}
+            >
+              Negative Tweets <ThumbDownIcon color="error" />
+            </Typography>
             {sentimentData.data && !sentimentLoading ? (
               <div>
-                <Typography
-                  component="h1"
-                  variant="h4"
-                  color="inherit"
-                  noWrap
-                  sx={{ flexGrow: 1 }}
-                >
-                  Negative Tweets <TwitterIcon /> <ThumbDownIcon />
-                </Typography>
                 <TopTweets
                   rows={
                     filteredSentimentData
@@ -267,17 +357,17 @@ const Product = () => {
               alignItems: "center",
             }}
           >
+            <Typography
+              component="h2"
+              variant="h5"
+              color="inherit"
+              noWrap
+              sx={{ flexGrow: 1, p: 2 }}
+            >
+              Positive Tweets <ThumbUpIcon color="success" />
+            </Typography>
             {sentimentData.data && !sentimentLoading ? (
               <div>
-                <Typography
-                  component="h1"
-                  variant="h4"
-                  color="inherit"
-                  noWrap
-                  sx={{ flexGrow: 1 }}
-                >
-                  Positive Tweets <TwitterIcon /> <ThumbUpIcon />
-                </Typography>
                 <TopTweets
                   rows={
                     filteredSentimentData
@@ -300,6 +390,11 @@ const Product = () => {
           </Paper>
         </Grid>
       </Grid>
+      <MessageBar
+        open={messageBarOpen}
+        setOpen={setMessageBarOpen}
+        message={message}
+      />
     </Layout>
   );
 };

@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 
-def subjectivity_polarity_plot(tweets: pd.DataFrame, title: str) -> go.Figure:
+def subjectivity_polarity_plot(tweets: pd.DataFrame) -> go.Figure:
     """
     Plots a bubble chart of subjectivity vs. polarity
     """
@@ -16,7 +16,6 @@ def subjectivity_polarity_plot(tweets: pd.DataFrame, title: str) -> go.Figure:
                      color_discrete_sequence=["#636EFA", "#00CC96", "#EF553B"],
                      hover_name="text",
                      hover_data=['date', 'user_followers'],
-                     title=title,
                      size_max=40)
     fig.update_layout(yaxis_range=[-0.2, 1.2], xaxis_range=[-1.2, 1.2])
 

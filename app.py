@@ -4,7 +4,6 @@ from firebase_admin import credentials, auth, db
 import firebase_admin
 
 import pandas as pd
-import plotly.express as px
 from flask import *
 from dotenv import load_dotenv
 
@@ -87,7 +86,7 @@ def get_sentiment_viz():
 
     df = pd.DataFrame(ref.get().values())
     df['date'] = pd.to_datetime(df['date'])
-    fig = subjectivity_polarity_plot(df, 'Tweets sentiment')
+    fig = subjectivity_polarity_plot(df)
     return json.loads(fig.to_json())
 
 
