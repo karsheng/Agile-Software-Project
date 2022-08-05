@@ -1,28 +1,23 @@
 import React from "react";
 import "./App.css";
 import { BrowserRouter as Router, Route } from "react-router-dom";
-import Login from "./components/Login";
-import SignUp from "./components/SignUp";
+import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
 import { AuthProvider } from "./Auth";
 import PrivateRoute from "./PrivateRoute";
-import ProductPage from "./components/ProductPage";
-import Page404 from "./components/Page404";
-
-const Home = () => {
-  return <h1>Hello</h1>;
-};
+import Product from "./pages/Product";
+import Page404 from "./pages/Page404";
+import Home from "./pages/Home";
 
 const App = () => {
   return (
     <AuthProvider>
       <Router>
-        <div>
-          <PrivateRoute exact path="/product/:id" component={ProductPage} />
-          <Route exact path="/login" component={Login} />
-          <Route exact path="/signup" component={SignUp} />
-          <Route exact path="/" component={Home} />
-          <Route exact path="/error" component={Page404} />
-        </div>
+        <PrivateRoute exact path="/product/:id" component={Product} />
+        <Route exact path="/login" component={Login} />
+        <Route exact path="/signup" component={SignUp} />
+        <Route exact path="/error" component={Page404} />
+        <Route exact path="/" component={Home} />
       </Router>
     </AuthProvider>
   );
