@@ -7,6 +7,7 @@ import { AuthProvider } from "./Auth";
 import PrivateRoute from "./PrivateRoute";
 import Product from "./pages/Product";
 import Page404 from "./pages/Page404";
+import Products from "./pages/Products";
 import Home from "./pages/Home";
 
 const App = () => {
@@ -14,6 +15,7 @@ const App = () => {
     <AuthProvider>
       <Router>
         <PrivateRoute exact path="/product/:id" component={Product} />
+        <PrivateRoute exact path="/products" component={Products} />
         <Route exact path="/login" component={Login} />
         <Route exact path="/signup" component={SignUp} />
         <Route exact path="/error" component={Page404} />

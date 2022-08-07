@@ -27,7 +27,7 @@ const Product = () => {
   const [sentimentLoading, setSentimentLoading] = useState(false);
   const [filteredSentimentData, setFilteredSentimentData] = useState(null);
   const { id: product } = useParams();
-  const productName = productList[product];
+  const productName = productList[product].fullName;
 
   const d = new Date();
   d.setHours(22);
@@ -63,8 +63,10 @@ const Product = () => {
         data.forEach((d) => {
           const idx = [];
 
-          idx.push(d["customdata"].findIndex((x) => x[0] >= fd));
-          idx.push(d["customdata"].findLastIndex((x) => x[0] <= td));
+          idx.push(d["customdata"].findIndex((x) => x[0] >= fd && x[0] <= td));
+          idx.push(
+            d["customdata"].findLastIndex((x) => x[0] >= fd && x[0] <= td)
+          );
           indices.push(idx);
         });
 

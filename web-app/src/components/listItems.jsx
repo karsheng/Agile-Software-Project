@@ -6,6 +6,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import LogoutIcon from "@mui/icons-material/Logout";
 import app from "../base.js";
+import { Link } from "react-router-dom";
 
 export const mainListItems = (
   <React.Fragment>
@@ -15,7 +16,7 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Dashboard" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton component={Link} to="/products">
       <ListItemIcon>
         <ShoppingCartIcon />
       </ListItemIcon>

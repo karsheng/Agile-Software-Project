@@ -49,10 +49,10 @@ def get_product_price_viz():
     end = args.get('end')
 
     ref1 = db.reference(
-        f'/{product}/prices').order_by_child('date').start_at(start).end_at(end)
+        f'cryptos/{product}/prices').order_by_child('date').start_at(start).end_at(end)
 
     ref2 = db.reference(
-        f'/{product}/polarity').order_by_child('date').start_at(start).end_at(end)
+        f'cryptos/{product}/polarity').order_by_child('date').start_at(start).end_at(end)
 
     prices = pd.DataFrame(ref1.get().values())
     prices['date'] = pd.to_datetime(prices['date'])
@@ -82,7 +82,7 @@ def get_sentiment_viz():
     end = args.get('end')
 
     ref = db.reference(
-        f'/{product}/tweets').order_by_child('date').start_at(start).end_at(end)
+        f'cryptos/{product}/tweets').order_by_child('date').start_at(start).end_at(end)
 
     df = pd.DataFrame(ref.get().values())
     df['date'] = pd.to_datetime(df['date'])
