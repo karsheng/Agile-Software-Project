@@ -3,7 +3,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import LogoutIcon from "@mui/icons-material/Logout";
 import app from "../base.js";
 import { Link } from "react-router-dom";
@@ -18,7 +18,7 @@ export const mainListItems = (
     </ListItemButton>
     <ListItemButton component={Link} to="/products">
       <ListItemIcon>
-        <ShoppingCartIcon />
+        <MonetizationOnIcon />
       </ListItemIcon>
       <ListItemText primary="Products" />
     </ListItemButton>

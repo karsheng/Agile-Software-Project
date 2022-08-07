@@ -9,6 +9,7 @@ import Typography from "@mui/material/Typography";
 import Layout from "../components/Layout";
 import { productList } from "../constants";
 import Switch from "@mui/material/Switch";
+import { Link } from "react-router-dom";
 
 const products = Object.keys(productList);
 
@@ -44,6 +45,9 @@ const Products = () => {
               <CardActions sx={{ p: 2 }}>
                 Add to Watchlist
                 <Switch size="big" />
+                <Button component={Link} to={`/product/${product}`}>
+                  View
+                </Button>
               </CardActions>
             </Card>
           </Grid>
