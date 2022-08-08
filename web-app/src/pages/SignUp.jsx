@@ -15,6 +15,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Copyright from "../components/Copyright";
+import Logo from "../components/Logo";
 
 const theme = createTheme();
 
@@ -47,6 +48,7 @@ const SignUp = ({ history }) => {
             alignItems: "center",
           }}
         >
+          <Logo width="100%" />
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
             <LockOutlinedIcon />
           </Avatar>
