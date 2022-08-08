@@ -176,7 +176,7 @@ const Product = () => {
       <Avatar
         sx={{ width: size, height: size }}
         alt={productName}
-        src={`/logos/${product}.png`}
+        src={`/cryptos/${product}.png`}
       />
     );
   };

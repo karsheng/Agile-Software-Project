@@ -32,7 +32,7 @@ const Products = () => {
                   // 16:9
                   p: 7,
                 }}
-                image={`/logos/${product}.png`}
+                image={`/cryptos/${product}.png`}
                 alt="random"
               />
               <CardContent sx={{ flexGrow: 1 }}>
