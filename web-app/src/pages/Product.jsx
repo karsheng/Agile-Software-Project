@@ -11,16 +11,23 @@ import DateSelector from "../components/DateSelector";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import TopTweets from "../components/TopTweets";
-import TwitterIcon from "@mui/icons-material/Twitter";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import Layout from "../components/Layout";
 import { productList } from "../constants";
-import Avatar from "@mui/material/Avatar";
 import Divider from "@mui/material/Divider";
-import MessageBar from "../components/MessageBar.jsx";
+import MessageBar from "../components/MessageBar";
+import Metrics from "../components/Metrics";
+import ProductLogo from "../components/ProductLogo";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import TwitterIcon from "@mui/icons-material/Twitter";
+import NewspaperIcon from "@mui/icons-material/Newspaper";
 
 const Product = () => {
+  const [metrics, setMetrics] = useState({});
+  const [metricsLoading, setMetricsLoading] = useState(false);
   const [priceData, setPriceData] = useState({});
   const [sentimentData, setSentimentData] = useState({});
   const [priceLoading, setPriceLoading] = useState(false);
@@ -133,6 +140,7 @@ const Product = () => {
 
       setPriceLoading(true);
       setSentimentLoading(true);
+      setMetricsLoading(true);
 
       fetch(
         `/api/price_viz?product=${product}&start=${startString}&end=${endString}`,
@@ -164,22 +172,47 @@ const Product = () => {
         .finally(() => {
           setSentimentLoading(false);
         });
+      fetch(`/api/metrics?product=${product}`, {
+        headers: headers,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setMetrics(data);
+        })
+        .finally(() => {
+          setMetricsLoading(false);
+        });
     });
+  };
+
+  const metricsProps = (title, data) => {
+    const { currentValue, percentage } = data;
+    return {
+      title,
+      value: currentValue,
+      percentage,
+      arrowIcon:
+        parseFloat(percentage) > 0 ? (
+          <ArrowUpwardIcon color="success" />
+        ) : (
+          <ArrowDownwardIcon color="error" />
+        ),
+    };
+  };
+
+  const sentimentCategory = (value) => {
+    if (value < -0.33) {
+      return `Negative (${value})`;
+    } else if (value >= -0.33 && value <= 0.33) {
+      return `Neutral (${value})`;
+    } else {
+      return `Positive (${value})`;
+    }
   };
 
   useEffect(() => {
     getData();
   }, []);
-
-  const ProductLogo = ({ size }) => {
-    return (
-      <Avatar
-        sx={{ width: size, height: size }}
-        alt={productName}
-        src={`/cryptos/${product}.png`}
-      />
-    );
-  };
 
   const Title = () => {
     return (
@@ -191,7 +224,7 @@ const Product = () => {
         sx={{ flexGrow: 1 }}
       >
         <Stack direction="row" spacing={1}>
-          <ProductLogo size={30} />
+          <ProductLogo product={product} productName={productName} size={30} />
           <span>{productName} Dashboard</span>
         </Stack>
       </Typography>
@@ -207,7 +240,63 @@ const Product = () => {
         </Button>
       </Stack>
       <Grid container spacing={3}>
+        <Grid item xs={12} md={4} lg={4}>
+          {metrics.prices ? (
+            <Metrics
+              {...metricsProps("Current Price", metrics.prices)}
+              value={`$ ${metrics.prices.currentValue}`}
+              icon={<AttachMoneyIcon fontSize="large" />}
+            />
+          ) : (
+            <CircularProgress />
+          )}
+        </Grid>
+        <Grid item xs={12} md={4} lg={4}>
+          {metrics.tweets ? (
+            <Metrics
+              {...metricsProps("Tweets Sentiment", metrics.tweets)}
+              value={sentimentCategory(metrics.tweets.currentValue)}
+              icon={
+                <TwitterIcon style={{ color: "#00acee" }} fontSize="large" />
+              }
+            />
+          ) : (
+            <CircularProgress />
+          )}
+        </Grid>
+        <Grid item xs={12} md={4} lg={4}>
+          {metrics.news ? (
+            <Metrics
+              {...metricsProps("Tweets Sentiment", metrics.news)}
+              value={sentimentCategory(metrics.news.currentValue)}
+              icon={<NewspaperIcon fontSize="large" />}
+            />
+          ) : (
+            <CircularProgress />
+          )}
+        </Grid>
         <Grid item xs={12}>
+          <Grid item xs={12}>
+            <Typography
+              component="h1"
+              variant="h4"
+              color="inherit"
+              noWrap
+              sx={{ flexGrow: 1, p: 2 }}
+            >
+              <Stack direction="row" spacing={1}>
+                <ProductLogo
+                  product={product}
+                  productName={productName}
+                  size={36}
+                />
+                <span>{productName} Price & Sentiments</span>
+              </Stack>
+            </Typography>
+            <Divider light />
+          </Grid>
+          <Divider light />
+          <br />
           <Paper
             sx={{
               p: 2,
@@ -216,18 +305,6 @@ const Product = () => {
               flexDirection: "column",
             }}
           >
-            <Typography
-              component="h2"
-              variant="h5"
-              color="inherit"
-              noWrap
-              sx={{ flexGrow: 1 }}
-            >
-              <Stack direction="row" spacing={1}>
-                <ProductLogo size={30} />
-                <span>{productName} Price & Sentiments</span>
-              </Stack>
-            </Typography>
             {priceData.data && !priceLoading ? (
               <Plot
                 data={priceData.data}
@@ -252,13 +329,12 @@ const Product = () => {
           </Paper>
         </Grid>
         <Grid item xs={12}>
-          <Divider light />
           <Typography
-            component="h1"
-            variant="h4"
+            component="h2"
+            variant="h5"
             color="inherit"
             noWrap
-            sx={{ flexGrow: 1, p: 2 }}
+            sx={{ flexGrow: 1, p: 1 }}
           >
             <TwitterIcon style={{ color: "#00acee" }} fontSize="large" />{" "}
             Twitter Section
@@ -280,7 +356,11 @@ const Product = () => {
             >
               <Stack direction="row" spacing={1}>
                 <span>Tweets Sentiment on </span>
-                <ProductLogo size={30} />
+                <ProductLogo
+                  product={product}
+                  productName={productName}
+                  size={30}
+                />
                 <span>{` ${productName} from ${fromDate.substring(
                   0,
                   10

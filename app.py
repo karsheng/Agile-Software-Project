@@ -106,6 +106,42 @@ def get_sentiment_viz():
     return json.loads(fig.to_json())
 
 
+@app.route('/api/metrics', methods=["GET"])
+@check_token
+def get_metrics():
+    args = request.args
+    product = args.get('product')
+    ref1 = db.reference(
+        f'cryptos/{product}/prices').order_by_child('date').limit_to_last(7)
+    prices = pd.DataFrame(ref1.get().values())
+    new_price, old_price = prices['price (USD)'].iloc[0], prices['price (USD)'].iloc[-1]
+    price_pct = new_price/old_price*100 if old_price != 0 else 0
+
+    ref2 = db.reference(
+        f'cryptos/{product}/polarity').order_by_child('date').limit_to_last(7)
+    tweets_polarity = pd.DataFrame(ref2.get().values())
+    new_tpolarity, old_tpolarity = tweets_polarity['weighted_polarity'].iloc[
+        0], tweets_polarity['weighted_polarity'].iloc[-1]
+    tpolarity_pct = new_tpolarity/old_tpolarity*100 if old_tpolarity != 0 else 0
+
+    new_npolarity = -0.74567
+    npolarity_pct = -27.3545
+    return {
+        'prices': {
+            'currentValue': new_price,
+            'percentage': f'{price_pct:.1f}'
+        },
+        'tweets': {
+            'currentValue': f'{new_tpolarity:.2f}',
+            'percentage': f'{tpolarity_pct:.1f}'
+        },
+        'news': {
+            'currentValue': f'{new_npolarity:.2f}',
+            'percentage': f'{npolarity_pct:.1f}'
+        }
+    }
+
+
 @app.errorhandler(404)
 def not_found(e):
     return app.send_static_file('index.html')

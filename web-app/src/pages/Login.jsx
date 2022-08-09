@@ -29,7 +29,7 @@ const Login = ({ history }) => {
         await app
           .auth()
           .signInWithEmailAndPassword(email.value, password.value);
-        history.push("/dashboard");
+        history.push("/products");
       } catch (error) {
         alert(error);
       }
@@ -40,7 +40,7 @@ const Login = ({ history }) => {
   const { currentUser } = useContext(AuthContext);
 
   if (currentUser) {
-    return <Redirect to="/dashboard" />;
+    return <Redirect to="/products" />;
   }
 
   return (
