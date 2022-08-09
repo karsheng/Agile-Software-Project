@@ -241,7 +241,7 @@ const Product = () => {
       </Stack>
       <Grid container spacing={3}>
         <Grid item xs={12} md={4} lg={4}>
-          {metrics.prices ? (
+          {metrics.prices && !metricsLoading ? (
             <Metrics
               {...metricsProps("Current Price", metrics.prices)}
               value={`$ ${metrics.prices.currentValue}`}
@@ -252,7 +252,7 @@ const Product = () => {
           )}
         </Grid>
         <Grid item xs={12} md={4} lg={4}>
-          {metrics.tweets ? (
+          {metrics.tweets && !metricsLoading ? (
             <Metrics
               {...metricsProps("Tweets Sentiment", metrics.tweets)}
               value={sentimentCategory(metrics.tweets.currentValue)}
@@ -265,9 +265,9 @@ const Product = () => {
           )}
         </Grid>
         <Grid item xs={12} md={4} lg={4}>
-          {metrics.news ? (
+          {metrics.news && !metricsLoading ? (
             <Metrics
-              {...metricsProps("Tweets Sentiment", metrics.news)}
+              {...metricsProps("News Sentiment", metrics.news)}
               value={sentimentCategory(metrics.news.currentValue)}
               icon={<NewspaperIcon fontSize="large" />}
             />
