@@ -9,6 +9,7 @@ import Product from "./pages/Product";
 import Page404 from "./pages/Page404";
 import Products from "./pages/Products";
 import Home from "./pages/Home";
+import ForgetPassword from "./pages/ForgetPassword";
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
           <PrivateRoute exact path="/product/:id" component={Product} />
           <PrivateRoute exact path="/products" component={Products} />
           <Route exact path="/login" component={Login} />
+          <Route exact path="/forget" component={ForgetPassword} />
           <Route exact path="/signup" component={SignUp} />
           <Route exact path="/" component={Home} />
           <Route path="*" component={Page404} />
