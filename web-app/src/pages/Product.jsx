@@ -39,7 +39,7 @@ const Product = () => {
   const d = new Date();
   d.setHours(22);
   const [endDate, setEndDate] = useState(d.toISOString().substring(0, 10));
-  d.setMonth(d.getMonth() - 2);
+  d.setMonth(d.getMonth() - 1);
   const [startDate, setStartDate] = useState(d.toISOString().substring(0, 10));
   const { currentUser } = useContext(AuthContext);
 

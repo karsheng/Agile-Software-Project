@@ -14,8 +14,21 @@ import { Link } from "react-router-dom";
 const products = Object.keys(productList);
 
 const Products = () => {
+  const Title = () => {
+    return (
+      <Typography
+        component="h1"
+        variant="h6"
+        color="inherit"
+        noWrap
+        sx={{ flexGrow: 1 }}
+      >
+        Products
+      </Typography>
+    );
+  };
   return (
-    <Layout title="Products">
+    <Layout title={<Title />}>
       <Grid container spacing={3}>
         {products.map((product) => (
           <Grid item key={product} xs={12} sm={6} md={3}>

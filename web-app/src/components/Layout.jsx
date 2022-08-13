@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -15,11 +15,27 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import AppBar from "./AppBar";
 import Drawer from "./Drawer";
 import Copyright from "./Copyright";
+import { AuthContext } from "../Auth.js";
+import Button from "@mui/material/Button";
+import Popover from "@mui/material/Popover";
+import app from "../base.js";
 
 const mdTheme = createTheme();
 
 const Layout = ({ title, children }) => {
   const [open, setOpen] = useState(false);
+  const { currentUser } = useContext(AuthContext);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const popoverOpen = Boolean(anchorEl);
+  const id = popoverOpen ? "email-popover" : undefined;
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const toggleDrawer = () => {
     setOpen(!open);
@@ -48,11 +64,37 @@ const Layout = ({ title, children }) => {
               <MenuIcon />
             </IconButton>
             {title}
-            <IconButton color="inherit">
+            {/* <IconButton color="inherit">
               <Badge badgeContent={4} color="secondary">
                 <NotificationsIcon />
               </Badge>
-            </IconButton>
+            </IconButton> */}
+
+            {currentUser ? (
+              <>
+                <Button
+                  aria-describedby={id}
+                  variant="inherit"
+                  onClick={handleClick}
+                >
+                  {currentUser.email}
+                </Button>
+                <Popover
+                  id={id}
+                  open={popoverOpen}
+                  anchorEl={anchorEl}
+                  onClose={handleClose}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                >
+                  <Button onClick={() => app.auth().signOut()}>Logout</Button>
+                </Popover>
+              </>
+            ) : (
+              ""
+            )}
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>
