@@ -24,14 +24,33 @@ const SignUp = ({ history }) => {
     async (event) => {
       event.preventDefault();
       const { email, password } = event.target.elements;
-      try {
-        await app
-          .auth()
-          .createUserWithEmailAndPassword(email.value, password.value);
-        history.push("/products");
-      } catch (error) {
-        alert(error);
-      }
+      app
+        .auth()
+        .createUserWithEmailAndPassword(email.value, password.value)
+        .then(({ user }) => {
+          const { uid } = user;
+          app
+            .database()
+            .ref("users/" + uid)
+            .set(
+              {
+                email: email.value,
+                wishlist: {},
+              },
+              (error) => {
+                if (error) {
+                  // The write failed...
+                  alert(error);
+                } else {
+                  // Data saved successfully!
+                  history.push("/products");
+                }
+              }
+            );
+        })
+        .catch((error) => {
+          alert(error);
+        });
     },
     [history]
   );
