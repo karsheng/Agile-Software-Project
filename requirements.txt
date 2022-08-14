@@ -4,3 +4,11 @@ pandas
 python-dotenv
 gunicorn
 plotly
+tweepy
+pyrebase
+jwt
+firebase-admin
+textblob
+scipy
+ matplotlib
+ 
