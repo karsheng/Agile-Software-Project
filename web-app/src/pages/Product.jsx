@@ -10,9 +10,6 @@ import CircularProgress from "@mui/material/CircularProgress";
 import DateSelector from "../components/DateSelector";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import TopTweets from "../components/TopTweets";
-import ThumbDownIcon from "@mui/icons-material/ThumbDown";
-import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import Layout from "../components/Layout";
 import { productList } from "../constants";
 import Divider from "@mui/material/Divider";
@@ -24,6 +21,7 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import NewspaperIcon from "@mui/icons-material/Newspaper";
+import TwitterSection from "../components/TwitterSection";
 
 const Product = () => {
   const [metrics, setMetrics] = useState({});
@@ -105,24 +103,6 @@ const Product = () => {
         setMessageBarOpen(true);
       }
     }
-  };
-
-  const getTopTweets = (data) => {
-    const followers = data["customdata"].map((d) => d[1]);
-    const followersSorted = followers.slice().sort((a, b) => a - b);
-    followersSorted.reverse();
-
-    const topTweets = followersSorted.map((x, id) => {
-      const i = followers.findIndex((y) => y === x);
-      return {
-        id: id,
-        text: data["hovertext"][i],
-        followers: followers[i],
-        polarity: data["x"][i],
-      };
-    });
-
-    return topTweets;
   };
 
   const getData = () => {
@@ -240,6 +220,7 @@ const Product = () => {
         </Button>
       </Stack>
       <Grid container spacing={3}>
+        {/* Metrics */}
         <Grid item xs={12} md={4} lg={4}>
           {metrics.prices && !metricsLoading ? (
             <Metrics
@@ -275,6 +256,7 @@ const Product = () => {
             <CircularProgress />
           )}
         </Grid>
+        {/* Price and Sentiments Plot */}
         <Grid item xs={12}>
           <Grid item xs={12}>
             <Typography
@@ -328,149 +310,16 @@ const Product = () => {
             )}
           </Paper>
         </Grid>
-        <Grid item xs={12}>
-          <Typography
-            component="h2"
-            variant="h5"
-            color="inherit"
-            noWrap
-            sx={{ flexGrow: 1, p: 1 }}
-          >
-            <TwitterIcon style={{ color: "#00acee" }} fontSize="large" />{" "}
-            Twitter Section
-          </Typography>
-          <Paper
-            sx={{
-              p: 2,
-              alignItems: "center",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <Typography
-              component="h2"
-              variant="h5"
-              color="inherit"
-              noWrap
-              sx={{ flexGrow: 1 }}
-            >
-              <Stack direction="row" spacing={1}>
-                <span>Tweets Sentiment on </span>
-                <ProductLogo
-                  product={product}
-                  productName={productName}
-                  size={30}
-                />
-                <span>{` ${productName} from ${fromDate.substring(
-                  0,
-                  10
-                )} - ${toDate.substring(0, 10)}`}</span>
-              </Stack>
-            </Typography>
-            {sentimentData.data && !sentimentLoading ? (
-              <Plot
-                data={
-                  filteredSentimentData
-                    ? filteredSentimentData
-                    : sentimentData.data
-                }
-                useResizeHandler={true}
-                layout={{
-                  ...sentimentData.layout,
-                  margin: {
-                    l: 50,
-                    r: 50,
-                    b: 50,
-                    t: 30,
-                    pad: 4,
-                  },
-                  autosize: true,
-                }}
-                style={{ width: "100%" }}
-              />
-            ) : (
-              <CircularProgress />
-            )}
-          </Paper>
-        </Grid>
-        <Grid item xs={12} md={6} lg={6}>
-          <Paper
-            sx={{
-              p: 2,
-              alignItems: "center",
-            }}
-          >
-            <Typography
-              component="h2"
-              variant="h5"
-              color="inherit"
-              noWrap
-              sx={{ flexGrow: 1, p: 2 }}
-            >
-              Negative Tweets <ThumbDownIcon color="error" />
-            </Typography>
-            {sentimentData.data && !sentimentLoading ? (
-              <div>
-                <TopTweets
-                  rows={
-                    filteredSentimentData
-                      ? getTopTweets(filteredSentimentData[2])
-                      : getTopTweets(sentimentData.data[2])
-                  }
-                />
-              </div>
-            ) : (
-              <Stack
-                sx={{
-                  alignItems: "center",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <CircularProgress />
-              </Stack>
-            )}
-          </Paper>
-        </Grid>
-        <Grid item xs={12} md={6} lg={6}>
-          <Paper
-            sx={{
-              p: 2,
-              alignItems: "center",
-            }}
-          >
-            <Typography
-              component="h2"
-              variant="h5"
-              color="inherit"
-              noWrap
-              sx={{ flexGrow: 1, p: 2 }}
-            >
-              Positive Tweets <ThumbUpIcon color="success" />
-            </Typography>
-            {sentimentData.data && !sentimentLoading ? (
-              <div>
-                <TopTweets
-                  rows={
-                    filteredSentimentData
-                      ? getTopTweets(filteredSentimentData[0])
-                      : getTopTweets(sentimentData.data[0])
-                  }
-                />
-              </div>
-            ) : (
-              <Stack
-                sx={{
-                  alignItems: "center",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <CircularProgress />
-              </Stack>
-            )}
-          </Paper>
-        </Grid>
+        {/* Twitter Section */}
+        <TwitterSection
+          sentimentData={sentimentData}
+          filteredSentimentData={filteredSentimentData}
+          fromDate={fromDate}
+          toDate={toDate}
+          product={product}
+          productName={productName}
+          sentimentLoading={sentimentLoading}
+        />
       </Grid>
       <MessageBar
         open={messageBarOpen}
