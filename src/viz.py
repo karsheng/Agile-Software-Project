@@ -13,7 +13,7 @@ def subjectivity_polarity_plot(tweets: pd.DataFrame) -> go.Figure:
     fig = px.scatter(tweets,
                      x="polarity", y="subjectivity",
                      size=np.log(tweets["user_followers"]+2) / np.log(1.1), color="sentiment",
-                     color_discrete_sequence=["#636EFA", "#00CC96", "#EF553B"],
+                     color_discrete_sequence=["#00CC96", "#636EFA", "#EF553B"],
                      hover_name="text",
                      hover_data=['date', 'user_followers'],
                      size_max=40)

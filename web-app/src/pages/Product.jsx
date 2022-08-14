@@ -453,8 +453,8 @@ const Product = () => {
                 <TopTweets
                   rows={
                     filteredSentimentData
-                      ? getTopTweets(filteredSentimentData[1])
-                      : getTopTweets(sentimentData.data[1])
+                      ? getTopTweets(filteredSentimentData[0])
+                      : getTopTweets(sentimentData.data[0])
                   }
                 />
               </div>

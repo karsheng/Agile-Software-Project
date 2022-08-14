@@ -76,7 +76,10 @@ def get_sentiment_viz():
 
     df = pd.DataFrame(ref.get().values())
     df['date'] = pd.to_datetime(df['date'])
+    df = df.drop_duplicates(['user_followers', 'text']
+                            ).sort_values(by='sentiment', ascending=False)
     fig = subjectivity_polarity_plot(df)
+
     return json.loads(fig.to_json())
 
 
