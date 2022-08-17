@@ -153,12 +153,17 @@ const Product = () => {
       )
         .then((res) => res.json())
         .then((data) => {
+          if (data.error) throw data.error;
           setPriceData(data);
           const dates = data.data[0].x;
           setStartDate(dates[0]);
           setEndDate(dates[dates.length - 1]);
           setFromDate(dates[0]);
           setToDate(dates[dates.length - 1]);
+        })
+        .catch((e) => {
+          alert(e);
+          setPriceData({ data: [], layout: {} });
         })
         .finally(() => {
           setPriceLoading(false);
@@ -172,7 +177,12 @@ const Product = () => {
       )
         .then((res) => res.json())
         .then((data) => {
+          if (data.error) throw data.error;
           setSentimentData(data);
+        })
+        .catch((e) => {
+          alert(e);
+          setSentimentData({ data: [], layout: {} });
         })
         .finally(() => {
           setSentimentLoading(false);
@@ -186,9 +196,15 @@ const Product = () => {
       )
         .then((res) => res.json())
         .then((data) => {
+          if (data.error) throw data.error;
           const { fig, publishers } = data;
           setNewsData(fig);
           setPublishers(publishers);
+        })
+        .catch((e) => {
+          alert(e);
+          setNewsData({ data: [], layout: {} });
+          setPublishers([]);
         })
         .finally(() => {
           setNewsLoading(false);
@@ -199,7 +215,11 @@ const Product = () => {
       })
         .then((res) => res.json())
         .then((data) => {
+          if (data.error) throw data.error;
           setMetrics(data);
+        })
+        .catch((e) => {
+          alert(e);
         })
         .finally(() => {
           setMetricsLoading(false);
@@ -208,7 +228,12 @@ const Product = () => {
   };
 
   const metricsProps = (title, data) => {
-    const { currentValue, percentage } = data;
+    let currentValue = "-";
+    let percentage = "-";
+    if (data) {
+      currentValue = data.currentValue;
+      percentage = data.percentage;
+    }
     return {
       title,
       value: currentValue,
@@ -275,10 +300,10 @@ const Product = () => {
       <Grid container spacing={3}>
         {/* Metrics */}
         <Grid item xs={12} md={4} lg={4}>
-          {metrics.prices && !metricsLoading ? (
+          {!metricsLoading ? (
             <Metrics
               {...metricsProps("Current Price", metrics.prices)}
-              value={`$ ${metrics.prices.currentValue}`}
+              value={metrics.prices ? `$ ${metrics.prices.currentValue}` : "-"}
               icon={<AttachMoneyIcon fontSize="large" />}
             />
           ) : (
@@ -286,10 +311,14 @@ const Product = () => {
           )}
         </Grid>
         <Grid item xs={12} md={4} lg={4}>
-          {metrics.tweets && !metricsLoading ? (
+          {!metricsLoading ? (
             <Metrics
               {...metricsProps("Tweets Sentiment", metrics.tweets)}
-              value={sentimentCategory(metrics.tweets.currentValue)}
+              value={
+                metrics.tweets
+                  ? sentimentCategory(metrics.tweets.currentValue)
+                  : "-"
+              }
               icon={<TwitterIcon fontSize="large" />}
             />
           ) : (
@@ -297,10 +326,14 @@ const Product = () => {
           )}
         </Grid>
         <Grid item xs={12} md={4} lg={4}>
-          {metrics.news && !metricsLoading ? (
+          {!metricsLoading ? (
             <Metrics
               {...metricsProps("News Sentiment", metrics.news)}
-              value={sentimentCategory(metrics.news.currentValue)}
+              value={
+                metrics.news
+                  ? sentimentCategory(metrics.news.currentValue)
+                  : "-"
+              }
               icon={<NewspaperIcon fontSize="large" />}
             />
           ) : (

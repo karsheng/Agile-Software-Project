@@ -110,7 +110,11 @@ const TwitterSection = ({
           </SectionTitle>
           {sentimentData && !sentimentLoading ? (
             <div>
-              <TopTweets rows={getTopTweets(sentimentData[2])} />
+              <TopTweets
+                rows={
+                  sentimentData.length > 0 ? getTopTweets(sentimentData[2]) : []
+                }
+              />
             </div>
           ) : (
             <Stack
@@ -139,7 +143,11 @@ const TwitterSection = ({
           </SectionTitle>
           {sentimentData && !sentimentLoading ? (
             <div>
-              <TopTweets rows={getTopTweets(sentimentData[0])} />
+              <TopTweets
+                rows={
+                  sentimentData.length > 0 ? getTopTweets(sentimentData[0]) : []
+                }
+              />
             </div>
           ) : (
             <Stack
