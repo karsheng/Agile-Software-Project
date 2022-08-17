@@ -22,6 +22,7 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import NewspaperIcon from "@mui/icons-material/Newspaper";
 import TwitterSection from "../components/TwitterSection";
+import { MINDAYS } from "../constants";
 
 const Product = () => {
   const [metrics, setMetrics] = useState({});
@@ -46,6 +47,9 @@ const Product = () => {
 
   const [messageBarOpen, setMessageBarOpen] = useState(false);
   const [message, setMessage] = useState(null);
+
+  const maxDate = new Date(endDate);
+  maxDate.setDate(maxDate.getDate() - 7);
 
   if (!currentUser) {
     return <Redirect to="/" />;
@@ -112,6 +116,11 @@ const Product = () => {
       };
       const start = new Date(startDate);
       const end = new Date(endDate);
+
+      if (start > maxDate) {
+        alert("Please select a valid date range");
+        return;
+      }
       start.setHours(22);
       end.setHours(22);
 
@@ -134,6 +143,8 @@ const Product = () => {
           const dates = data.data[0].x;
           setStartDate(dates[0]);
           setEndDate(dates[dates.length - 1]);
+          setFromDate(dates[0]);
+          setToDate(dates[dates.length - 1]);
         })
         .finally(() => {
           setPriceLoading(false);
@@ -213,7 +224,12 @@ const Product = () => {
   return (
     <Layout title={<Title />}>
       <Stack sx={{ mb: 2 }} spacing={1} direction="row">
-        <DateSelector label="Start" setValue={setStartDate} value={startDate} />
+        <DateSelector
+          label="Start"
+          setValue={setStartDate}
+          value={startDate}
+          maxDate={maxDate}
+        />
         <DateSelector label="End" setValue={setEndDate} value={endDate} />
         <Button onClick={getData} size="large" variant="contained">
           Get Data
