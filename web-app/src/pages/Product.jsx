@@ -57,7 +57,6 @@ const Product = () => {
   const { currentUser } = useContext(AuthContext);
 
   const { id: product } = useParams();
-  const productName = productList[product].fullName;
 
   if (!currentUser) {
     return <Redirect to="/" />;
@@ -66,6 +65,7 @@ const Product = () => {
   if (products.findIndex((p) => p === product) < 0) {
     return <Redirect to="/error" />;
   }
+  const productName = productList[product].fullName;
 
   const getSplicedData = (data, fd, td) => {
     const indices = [];
