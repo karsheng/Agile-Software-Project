@@ -12,7 +12,7 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Layout from "../components/Layout";
 import { productList } from "../constants";
-import Divider from "@mui/material/Divider";
+import AnalyticsIcon from "@mui/icons-material/Analytics";
 import MessageBar from "../components/MessageBar";
 import Metrics from "../components/Metrics";
 import ProductLogo from "../components/ProductLogo";
@@ -22,7 +22,7 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import NewspaperIcon from "@mui/icons-material/Newspaper";
 import TwitterSection from "../components/TwitterSection";
-import { MINDAYS } from "../constants";
+import SectionTitle from "../components/SectionTitle";
 
 const Product = () => {
   const [metrics, setMetrics] = useState({});
@@ -235,6 +235,13 @@ const Product = () => {
           Get Data
         </Button>
       </Stack>
+      <SectionTitle typoComponent="h1" variant="h4">
+        <Stack sx={{ mb: 2 }} spacing={1} direction="row">
+          <AnalyticsIcon fontSize="large" />
+          {""}
+          <> Key Metrics</>
+        </Stack>
+      </SectionTitle>
       <Grid container spacing={3}>
         {/* Metrics */}
         <Grid item xs={12} md={4} lg={4}>
@@ -253,9 +260,7 @@ const Product = () => {
             <Metrics
               {...metricsProps("Tweets Sentiment", metrics.tweets)}
               value={sentimentCategory(metrics.tweets.currentValue)}
-              icon={
-                <TwitterIcon style={{ color: "#00acee" }} fontSize="large" />
-              }
+              icon={<TwitterIcon fontSize="large" />}
             />
           ) : (
             <CircularProgress />
@@ -275,13 +280,7 @@ const Product = () => {
         {/* Price and Sentiments Plot */}
         <Grid item xs={12}>
           <Grid item xs={12}>
-            <Typography
-              component="h1"
-              variant="h4"
-              color="inherit"
-              noWrap
-              sx={{ flexGrow: 1, p: 2 }}
-            >
+            <SectionTitle typoComponent="h1" variant="h4">
               <Stack direction="row" spacing={1}>
                 <ProductLogo
                   product={product}
@@ -290,10 +289,8 @@ const Product = () => {
                 />
                 <span>{productName} Price & Sentiments</span>
               </Stack>
-            </Typography>
-            <Divider light />
+            </SectionTitle>
           </Grid>
-          <Divider light />
           <br />
           <Paper
             sx={{

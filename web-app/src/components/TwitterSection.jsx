@@ -10,6 +10,7 @@ import Stack from "@mui/material/Stack";
 import ProductLogo from "./ProductLogo";
 import Plot from "react-plotly.js";
 import CircularProgress from "@mui/material/CircularProgress";
+import SectionTitle from "./SectionTitle";
 
 const TwitterSection = ({
   sentimentData,
@@ -40,16 +41,11 @@ const TwitterSection = ({
   return (
     <>
       <Grid item xs={12}>
-        <Typography
-          component="h2"
-          variant="h5"
-          color="inherit"
-          noWrap
-          sx={{ flexGrow: 1, p: 1 }}
-        >
-          <TwitterIcon style={{ color: "#00acee" }} fontSize="large" /> Twitter
-          Section
-        </Typography>
+        <SectionTitle typoComponent="h1" variant="h4">
+          <Stack sx={{ mb: 2 }} spacing={1} direction="row">
+            <TwitterIcon fontSize="large" /> <div>Twitter Section</div>
+          </Stack>
+        </SectionTitle>
         <Paper
           sx={{
             p: 2,
@@ -107,15 +103,11 @@ const TwitterSection = ({
             alignItems: "center",
           }}
         >
-          <Typography
-            component="h2"
-            variant="h5"
-            color="inherit"
-            noWrap
-            sx={{ flexGrow: 1, p: 2 }}
-          >
-            Negative Tweets <ThumbDownIcon color="error" />
-          </Typography>
+          <SectionTitle typoComponent="h2" variant="h5">
+            <Stack spacing={1} direction="row">
+              <ThumbDownIcon /> <div>Negative Tweets</div>
+            </Stack>
+          </SectionTitle>
           {sentimentData && !sentimentLoading ? (
             <div>
               <TopTweets rows={getTopTweets(sentimentData[2])} />
@@ -140,15 +132,11 @@ const TwitterSection = ({
             alignItems: "center",
           }}
         >
-          <Typography
-            component="h2"
-            variant="h5"
-            color="inherit"
-            noWrap
-            sx={{ flexGrow: 1, p: 2 }}
-          >
-            Positive Tweets <ThumbUpIcon color="success" />
-          </Typography>
+          <SectionTitle typoComponent="h2" variant="h5">
+            <Stack spacing={1} direction="row">
+              <ThumbUpIcon /> <div>Positive Tweets</div>
+            </Stack>
+          </SectionTitle>
           {sentimentData && !sentimentLoading ? (
             <div>
               <TopTweets rows={getTopTweets(sentimentData[0])} />
