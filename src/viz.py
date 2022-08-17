@@ -22,7 +22,7 @@ def subjectivity_polarity_plot(tweets: pd.DataFrame) -> go.Figure:
     return fig
 
 
-def price_polarity_plot(prices: pd.Series, polarity: pd.Series, rise_timestamps: List, crash_timestamps: List) -> go.Figure:
+def price_polarity_plot(prices: pd.Series, tweets_polarity: pd.Series, news_polarity: pd.Series, rise_timestamps: List, crash_timestamps: List) -> go.Figure:
     # Create figure with secondary y-axis
     fig = make_subplots(specs=[[{"secondary_y": True}]])
 
@@ -33,8 +33,14 @@ def price_polarity_plot(prices: pd.Series, polarity: pd.Series, rise_timestamps:
     )
 
     fig.add_trace(
-        go.Scatter(x=polarity.index, y=polarity, name="tweets polarity",
-                   line=dict(color='rgba(0, 0, 0, 0.25)', width=3, dash='dot')),
+        go.Scatter(x=tweets_polarity.index, y=tweets_polarity, name="tweets polarity",
+                   line=dict(color='rgba(0, 255, 0, 0.4)', width=3, dash='dot')),
+        secondary_y=True,
+    )
+
+    fig.add_trace(
+        go.Scatter(x=news_polarity.index, y=news_polarity, name="news polarity",
+                   line=dict(color='rgba(255, 0, 0, 0.4)', width=3, dash='dot')),
         secondary_y=True,
     )
 

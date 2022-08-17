@@ -44,13 +44,20 @@ def get_product_price_viz():
     ref2 = db.reference(
         f'cryptos/{product}/polarity').order_by_child('date').start_at(start).end_at(end)
 
+    ref3 = db.reference(
+        f'cryptos/{product}/news_polarity').order_by_child('date').start_at(start).end_at(end)
+
     prices = pd.DataFrame(ref1.get().values())
     prices['date'] = pd.to_datetime(prices['date'])
     prices = prices.set_index('date').squeeze()
 
-    polarity = pd.DataFrame(ref2.get().values())
-    polarity['date'] = pd.to_datetime(polarity['date'])
-    polarity = polarity.set_index('date').squeeze()
+    tweets_polarity = pd.DataFrame(ref2.get().values())
+    tweets_polarity['date'] = pd.to_datetime(tweets_polarity['date'])
+    tweets_polarity = tweets_polarity.set_index('date').squeeze()
+
+    news_polarity = pd.DataFrame(ref3.get().values())
+    news_polarity['date'] = pd.to_datetime(news_polarity['date'])
+    news_polarity = news_polarity.set_index('date').squeeze()
 
     threshold = 0.12
     ts = prices.resample('7D').first()
@@ -59,7 +66,7 @@ def get_product_price_viz():
     crash_timestamps = get_crash_timestamps(ts, threshold)
 
     fig = price_polarity_plot(
-        prices, polarity, rise_timestamps, crash_timestamps)
+        prices, tweets_polarity, news_polarity, rise_timestamps, crash_timestamps)
     return json.loads(fig.to_json())
 
 
