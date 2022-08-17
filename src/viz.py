@@ -17,7 +17,8 @@ def subjectivity_polarity_plot(tweets: pd.DataFrame) -> go.Figure:
                      hover_name="text",
                      hover_data=['date', 'user_followers'],
                      size_max=40)
-    fig.update_layout(yaxis_range=[-0.2, 1.2], xaxis_range=[-1.2, 1.2])
+    fig.update_layout(
+        yaxis_range=[-0.2, 1.2], xaxis_range=[-1.2, 1.2], xaxis_title='Polarity', yaxis_title='Subjectivity')
 
     return fig
 

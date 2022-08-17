@@ -328,7 +328,10 @@ const Product = () => {
         </Grid>
         {/* Twitter Section */}
         <TwitterSection
-          sentimentData={sentimentData}
+          sentimentData={
+            filteredSentimentData ? filteredSentimentData : sentimentData.data
+          }
+          layout={sentimentData.layout}
           filteredSentimentData={filteredSentimentData}
           fromDate={fromDate}
           toDate={toDate}

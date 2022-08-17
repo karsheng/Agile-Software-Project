@@ -13,12 +13,12 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 const TwitterSection = ({
   sentimentData,
-  filteredSentimentData,
   fromDate,
   toDate,
   product,
   productName,
   sentimentLoading,
+  layout,
 }) => {
   const getTopTweets = (data) => {
     const followers = data["customdata"].map((d) => d[1]);
@@ -78,16 +78,12 @@ const TwitterSection = ({
               )} - ${toDate.substring(0, 10)}`}</span>
             </Stack>
           </Typography>
-          {sentimentData.data && !sentimentLoading ? (
+          {sentimentData && !sentimentLoading ? (
             <Plot
-              data={
-                filteredSentimentData
-                  ? filteredSentimentData
-                  : sentimentData.data
-              }
+              data={sentimentData}
               useResizeHandler={true}
               layout={{
-                ...sentimentData.layout,
+                ...layout,
                 margin: {
                   l: 50,
                   r: 50,
@@ -120,15 +116,9 @@ const TwitterSection = ({
           >
             Negative Tweets <ThumbDownIcon color="error" />
           </Typography>
-          {sentimentData.data && !sentimentLoading ? (
+          {sentimentData && !sentimentLoading ? (
             <div>
-              <TopTweets
-                rows={
-                  filteredSentimentData
-                    ? getTopTweets(filteredSentimentData[2])
-                    : getTopTweets(sentimentData.data[2])
-                }
-              />
+              <TopTweets rows={getTopTweets(sentimentData[2])} />
             </div>
           ) : (
             <Stack
@@ -159,15 +149,9 @@ const TwitterSection = ({
           >
             Positive Tweets <ThumbUpIcon color="success" />
           </Typography>
-          {sentimentData.data && !sentimentLoading ? (
+          {sentimentData && !sentimentLoading ? (
             <div>
-              <TopTweets
-                rows={
-                  filteredSentimentData
-                    ? getTopTweets(filteredSentimentData[0])
-                    : getTopTweets(sentimentData.data[0])
-                }
-              />
+              <TopTweets rows={getTopTweets(sentimentData[0])} />
             </div>
           ) : (
             <Stack
