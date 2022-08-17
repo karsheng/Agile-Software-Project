@@ -3,6 +3,7 @@ import json
 from firebase_admin import auth, db
 
 import pandas as pd
+import numpy as np
 from flask import *
 
 from src.utils import get_rise_timestamps, get_crash_timestamps
@@ -48,16 +49,19 @@ def get_product_price_viz():
         f'cryptos/{product}/news_polarity').order_by_child('date').start_at(start).end_at(end)
 
     prices = pd.DataFrame(ref1.get().values())
-    prices['date'] = pd.to_datetime(prices['date'])
-    prices = prices.set_index('date').squeeze()
+    if prices.shape[0] > 0:
+        prices['date'] = pd.to_datetime(prices['date'])
+        prices = prices.set_index('date').squeeze()
 
     tweets_polarity = pd.DataFrame(ref2.get().values())
-    tweets_polarity['date'] = pd.to_datetime(tweets_polarity['date'])
-    tweets_polarity = tweets_polarity.set_index('date').squeeze()
+    if tweets_polarity.shape[0] > 0:
+        tweets_polarity['date'] = pd.to_datetime(tweets_polarity['date'])
+        tweets_polarity = tweets_polarity.set_index('date').squeeze()
 
     news_polarity = pd.DataFrame(ref3.get().values())
-    news_polarity['date'] = pd.to_datetime(news_polarity['date'])
-    news_polarity = news_polarity.set_index('date').squeeze()
+    if news_polarity.shape[0] > 0:
+        news_polarity['date'] = pd.to_datetime(news_polarity['date'])
+        news_polarity = news_polarity.set_index('date').squeeze()
 
     threshold = 0.12
     ts = prices.resample('7D').first()
@@ -70,9 +74,9 @@ def get_product_price_viz():
     return json.loads(fig.to_json())
 
 
-@app.route('/api/sentiment', methods=["GET"])
+@app.route('/api/tweets_sentiment', methods=["GET"])
 @check_token
-def get_sentiment_viz():
+def get_tweets_sentiment_viz():
     args = request.args
     product = args.get('product')
     start = args.get('start')
@@ -84,8 +88,36 @@ def get_sentiment_viz():
     df = pd.DataFrame(ref.get().values())
     df['date'] = pd.to_datetime(df['date'])
     df = df.drop_duplicates(['user_followers', 'text']
-                            ).sort_values(by='sentiment', ascending=False)
-    fig = subjectivity_polarity_plot(df)
+                            ).sort_values(by=['date', 'sentiment'], ascending=False)
+
+    size = np.log(df["user_followers"].astype(float) + 2) / np.log(1.1)
+
+    hover_name = 'text'
+    hover_data = ['date', 'user_followers']
+    fig = subjectivity_polarity_plot(df, hover_name, hover_data, size)
+
+    return json.loads(fig.to_json())
+
+
+@app.route('/api/news_sentiment', methods=["GET"])
+@check_token
+def get_news_sentiment_viz():
+    args = request.args
+    product = args.get('product')
+    start = args.get('start')
+    end = args.get('end')
+
+    ref = db.reference(
+        f'cryptos/{product}/news').order_by_child('date').start_at(start).end_at(end)
+
+    df = pd.DataFrame(ref.get().values())
+    df['date'] = pd.to_datetime(df['date'])
+    df = df.drop_duplicates(['title']).sort_values(
+        by=['date', 'sentiment'], ascending=False)
+
+    hover_name = 'title'
+    hover_data = ['date', 'publisher']
+    fig = subjectivity_polarity_plot(df, hover_name, hover_data)
 
     return json.loads(fig.to_json())
 

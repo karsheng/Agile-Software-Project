@@ -23,33 +23,40 @@ import TwitterIcon from "@mui/icons-material/Twitter";
 import NewspaperIcon from "@mui/icons-material/Newspaper";
 import TwitterSection from "../components/TwitterSection";
 import SectionTitle from "../components/SectionTitle";
+import NewsSection from "../components/NewsSection";
 
 const Product = () => {
   const [metrics, setMetrics] = useState({});
   const [metricsLoading, setMetricsLoading] = useState(false);
+
   const [priceData, setPriceData] = useState({});
-  const [sentimentData, setSentimentData] = useState({});
   const [priceLoading, setPriceLoading] = useState(false);
+
+  const [sentimentData, setSentimentData] = useState({});
   const [sentimentLoading, setSentimentLoading] = useState(false);
   const [filteredSentimentData, setFilteredSentimentData] = useState(null);
-  const { id: product } = useParams();
-  const productName = productList[product].fullName;
+
+  const [newsData, setNewsData] = useState({});
+  const [newsLoading, setNewsLoading] = useState(false);
+  const [filteredNewsData, setFilteredNewsData] = useState(null);
 
   const d = new Date();
   d.setHours(22);
   const [endDate, setEndDate] = useState(d.toISOString().substring(0, 10));
   d.setMonth(d.getMonth() - 1);
   const [startDate, setStartDate] = useState(d.toISOString().substring(0, 10));
-  const { currentUser } = useContext(AuthContext);
-
   const [fromDate, setFromDate] = useState(startDate);
   const [toDate, setToDate] = useState(endDate);
+  const maxDate = new Date(endDate);
+  maxDate.setDate(maxDate.getDate() - 7);
 
   const [messageBarOpen, setMessageBarOpen] = useState(false);
   const [message, setMessage] = useState(null);
 
-  const maxDate = new Date(endDate);
-  maxDate.setDate(maxDate.getDate() - 7);
+  const { currentUser } = useContext(AuthContext);
+
+  const { id: product } = useParams();
+  const productName = productList[product].fullName;
 
   if (!currentUser) {
     return <Redirect to="/" />;
@@ -59,53 +66,58 @@ const Product = () => {
     return <Redirect to="/error" />;
   }
 
+  const getSplicedData = (data, fd, td) => {
+    const indices = [];
+    data.forEach((d) => {
+      const idx = [];
+
+      idx.push(d["customdata"].findIndex((x) => x[0] >= fd && x[0] <= td));
+      idx.push(d["customdata"].findLastIndex((x) => x[0] >= fd && x[0] <= td));
+      indices.push(idx);
+    });
+
+    const splicedData = data.map((d, i) => ({
+      ...d,
+      customdata: d["customdata"].slice(indices[i][0], indices[i][1]),
+      hovertext: d["hovertext"].slice(indices[i][0], indices[i][1]),
+      x: d["x"].slice(indices[i][0], indices[i][1]),
+      y: d["y"].slice(indices[i][0], indices[i][1]),
+      marker: {
+        ...d["marker"],
+        size: d["marker"].size.slice(indices[i][0], indices[i][1]),
+      },
+    }));
+
+    return splicedData;
+  };
+
   const handleRelayout = (e) => {
+    let fd = fromDate;
+    let td = toDate;
+
+    if (e["xaxis.range[0]"] && e["xaxis.range[1]"]) {
+      fd = e["xaxis.range[0]"];
+      td = e["xaxis.range[1]"];
+      setMessage(`${fd.substring(0, 10)} to ${td.substring(0, 10)} selected`);
+      setMessageBarOpen(true);
+    }
+
+    if (e["xaxis.autorange"] || e["yaxis.autorange"]) {
+      fd = priceData.layout.xaxis.range[0];
+      td = priceData.layout.xaxis.range[1];
+      setMessage(`${fd.substring(0, 10)} to ${td.substring(0, 10)} selected`);
+      setMessageBarOpen(true);
+    }
+
+    setFromDate(fd);
+    setToDate(td);
+
     if (sentimentData.data && !sentimentLoading) {
-      if (e["xaxis.range[0]"] && e["xaxis.range[1]"]) {
-        const fd = e["xaxis.range[0]"];
-        const td = e["xaxis.range[1]"];
-        setFromDate(fd);
-        setToDate(td);
-        const { data } = sentimentData;
-        const indices = [];
+      setFilteredSentimentData(getSplicedData(sentimentData.data, fd, td));
+    }
 
-        data.forEach((d) => {
-          const idx = [];
-
-          idx.push(d["customdata"].findIndex((x) => x[0] >= fd && x[0] <= td));
-          idx.push(
-            d["customdata"].findLastIndex((x) => x[0] >= fd && x[0] <= td)
-          );
-          indices.push(idx);
-        });
-
-        const splicedData = data.map((d, i) => ({
-          ...d,
-          customdata: d["customdata"].slice(indices[i][0], indices[i][1]),
-          hovertext: d["hovertext"].slice(indices[i][0], indices[i][1]),
-          x: d["x"].slice(indices[i][0], indices[i][1]),
-          y: d["y"].slice(indices[i][0], indices[i][1]),
-          marker: {
-            ...d["marker"],
-            size: d["marker"].size.slice(indices[i][0], indices[i][1]),
-          },
-        }));
-
-        setFilteredSentimentData(splicedData);
-        setMessage(`${fd.substring(0, 10)} to ${td.substring(0, 10)} selected`);
-        setMessageBarOpen(true);
-      }
-
-      if (e["xaxis.autorange"] || e["yaxis.autorange"]) {
-        setFilteredSentimentData(sentimentData.data);
-        const fd = priceData.layout.xaxis.range[0];
-        const td = priceData.layout.xaxis.range[1];
-
-        setFromDate(fd);
-        setToDate(td);
-        setMessage(`${fd.substring(0, 10)} to ${td.substring(0, 10)} selected`);
-        setMessageBarOpen(true);
-      }
+    if (newsData.data && !newsLoading) {
+      setFilteredNewsData(getSplicedData(newsData.data, fd, td));
     }
   };
 
@@ -129,6 +141,7 @@ const Product = () => {
 
       setPriceLoading(true);
       setSentimentLoading(true);
+      setNewsLoading(true);
       setMetricsLoading(true);
 
       fetch(
@@ -151,7 +164,7 @@ const Product = () => {
         });
 
       fetch(
-        `/api/sentiment?product=${product}&start=${startString}&end=${endString}`,
+        `/api/tweets_sentiment?product=${product}&start=${startString}&end=${endString}`,
         {
           headers: headers,
         }
@@ -163,6 +176,21 @@ const Product = () => {
         .finally(() => {
           setSentimentLoading(false);
         });
+
+      fetch(
+        `/api/news_sentiment?product=${product}&start=${startString}&end=${endString}`,
+        {
+          headers: headers,
+        }
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          setNewsData(data);
+        })
+        .finally(() => {
+          setNewsLoading(false);
+        });
+
       fetch(`/api/metrics?product=${product}`, {
         headers: headers,
       })
@@ -335,6 +363,16 @@ const Product = () => {
           product={product}
           productName={productName}
           sentimentLoading={sentimentLoading}
+        />
+        <NewsSection
+          sentimentData={filteredNewsData ? filteredNewsData : newsData.data}
+          layout={newsData.layout}
+          filteredSentimentData={filteredNewsData}
+          fromDate={fromDate}
+          toDate={toDate}
+          product={product}
+          productName={productName}
+          sentimentLoading={newsLoading}
         />
       </Grid>
       <MessageBar
