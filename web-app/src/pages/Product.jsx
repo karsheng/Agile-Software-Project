@@ -39,6 +39,7 @@ const Product = () => {
   const [newsData, setNewsData] = useState({});
   const [newsLoading, setNewsLoading] = useState(false);
   const [filteredNewsData, setFilteredNewsData] = useState(null);
+  const [publishers, setPublishers] = useState(null);
 
   const d = new Date();
   d.setHours(22);
@@ -185,7 +186,9 @@ const Product = () => {
       )
         .then((res) => res.json())
         .then((data) => {
-          setNewsData(data);
+          const { fig, publishers } = data;
+          setNewsData(fig);
+          setPublishers(publishers);
         })
         .finally(() => {
           setNewsLoading(false);
@@ -266,8 +269,7 @@ const Product = () => {
       <SectionTitle typoComponent="h1" variant="h4">
         <Stack sx={{ mb: 2 }} spacing={1} direction="row">
           <AnalyticsIcon fontSize="large" />
-          {""}
-          <> Key Metrics</>
+          <div> Key Metrics</div>
         </Stack>
       </SectionTitle>
       <Grid container spacing={3}>
@@ -367,12 +369,12 @@ const Product = () => {
         <NewsSection
           sentimentData={filteredNewsData ? filteredNewsData : newsData.data}
           layout={newsData.layout}
-          filteredSentimentData={filteredNewsData}
           fromDate={fromDate}
           toDate={toDate}
           product={product}
           productName={productName}
           sentimentLoading={newsLoading}
+          publishers={publishers ? publishers : []}
         />
       </Grid>
       <MessageBar

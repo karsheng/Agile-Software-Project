@@ -11,7 +11,7 @@ def subjectivity_polarity_plot(df: pd.DataFrame, hover_name: str, hover_data: Li
     Plots a bubble chart of subjectivity vs. polarity
     """
 
-    bubble_size = [5] * df.shape[0]
+    bubble_size = [2] * df.shape[0]
     if size is not None:
         bubble_size = size
     fig = px.scatter(df,
@@ -21,6 +21,7 @@ def subjectivity_polarity_plot(df: pd.DataFrame, hover_name: str, hover_data: Li
                      hover_name=hover_name,
                      hover_data=hover_data,
                      size_max=40)
+
     fig.update_layout(
         yaxis_range=[-0.2, 1.2], xaxis_range=[-1.2, 1.2], xaxis_title='Polarity', yaxis_title='Subjectivity')
 

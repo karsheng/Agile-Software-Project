@@ -116,10 +116,10 @@ def get_news_sentiment_viz():
         by=['date', 'sentiment'], ascending=False)
 
     hover_name = 'title'
-    hover_data = ['date', 'publisher']
+    hover_data = ['date', 'publisher', 'link']
     fig = subjectivity_polarity_plot(df, hover_name, hover_data)
 
-    return json.loads(fig.to_json())
+    return {'fig': json.loads(fig.to_json()), 'publishers': sorted(list(df['publisher'].unique()))}
 
 
 @app.route('/api/metrics', methods=["GET"])
