@@ -1,16 +1,22 @@
 import React from "react";
-import Products from "../components/Products";
 import { cryptoList } from "../constants";
+import ProductGrid from "../components/ProductGrid";
+import SectionTitle from "../components/SectionTitle";
+import LayoutTitle from "../components/LayoutTitle";
+import Layout from "../components/Layout";
 
 const CryptoList = () => {
   return (
-    <>
-      <Products
-        productList={cryptoList}
-        title={"CryptoCurrencies"}
+    <Layout title={<LayoutTitle text="Cryptocurrencies" />}>
+      <SectionTitle typoComponent="h1" variant="h4">
+        <div>CryptoCurrencies</div>
+      </SectionTitle>
+      <ProductGrid
         productType="cryptos"
+        productList={cryptoList}
+        showAll={true}
       />
-    </>
+    </Layout>
   );
 };
 
