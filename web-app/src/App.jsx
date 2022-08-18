@@ -7,7 +7,7 @@ import { AuthProvider } from "./Auth";
 import PrivateRoute from "./PrivateRoute";
 import Product from "./pages/Product";
 import Page404 from "./pages/Page404";
-import Products from "./pages/Products";
+import CryptoPage from "./pages/CryptoPage";
 import Home from "./pages/Home";
 import ForgetPassword from "./pages/ForgetPassword";
 
@@ -17,7 +17,7 @@ const App = () => {
       <Router>
         <Switch>
           <PrivateRoute exact path="/product/:id" component={Product} />
-          <PrivateRoute exact path="/products" component={Products} />
+          <PrivateRoute exact path="/cryptos" component={CryptoPage} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/forget" component={ForgetPassword} />
           <Route exact path="/signup" component={SignUp} />

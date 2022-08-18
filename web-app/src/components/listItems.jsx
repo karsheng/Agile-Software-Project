@@ -7,6 +7,7 @@ import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import LogoutIcon from "@mui/icons-material/Logout";
 import app from "../base.js";
 import { Link } from "react-router-dom";
+import { REDIRECT } from "../constants.js";
 
 export const mainListItems = (
   <React.Fragment>
@@ -16,11 +17,11 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Dashboard" />
     </ListItemButton>
-    <ListItemButton component={Link} to="/products">
+    <ListItemButton component={Link} to={REDIRECT}>
       <ListItemIcon>
         <MonetizationOnIcon />
       </ListItemIcon>
-      <ListItemText primary="Products" />
+      <ListItemText primary="Crytocurrencies" />
     </ListItemButton>
   </React.Fragment>
 );

@@ -7,13 +7,12 @@ import CardMedia from "@mui/material/CardMedia";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Layout from "../components/Layout";
-import { productList } from "../constants";
 import Switch from "@mui/material/Switch";
 import { Link } from "react-router-dom";
 
-const products = Object.keys(productList);
+const Products = ({ productList, title }) => {
+  const products = Object.keys(productList);
 
-const Products = () => {
   const Title = () => {
     return (
       <Typography
@@ -23,7 +22,7 @@ const Products = () => {
         noWrap
         sx={{ flexGrow: 1 }}
       >
-        Products
+        {title}
       </Typography>
     );
   };

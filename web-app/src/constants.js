@@ -1,6 +1,7 @@
 export const drawerWidth = 240;
 export const MINDAYS = 7;
-export const productList = {
+export const REDIRECT = '/cryptos'
+export const cryptoList = {
     'btc': {fullName: 'Bitcoin', disabled: false}, 
     'eth': {fullName: 'Ethereum', disabled: false},
     'bnb': {fullName: 'Binance', disabled: false},
