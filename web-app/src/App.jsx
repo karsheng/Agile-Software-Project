@@ -8,6 +8,7 @@ import PrivateRoute from "./PrivateRoute";
 import Page404 from "./pages/Page404";
 import CryptoList from "./pages/CryptoList";
 import CryptoDashboard from "./pages/CryptoDashboard";
+import StockList from "./pages/StockList";
 import Home from "./pages/Home";
 import ForgetPassword from "./pages/ForgetPassword";
 
@@ -18,6 +19,7 @@ const App = () => {
         <Switch>
           <PrivateRoute exact path="/cryptos/:id" component={CryptoDashboard} />
           <PrivateRoute exact path="/cryptos" component={CryptoList} />
+          <PrivateRoute exact path="/stocks" component={StockList} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/forget" component={ForgetPassword} />
           <Route exact path="/signup" component={SignUp} />

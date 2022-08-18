@@ -44,7 +44,7 @@ const Products = ({ productList, title, productType }) => {
                   // 16:9
                   p: 7,
                 }}
-                image={`/cryptos/${product}.png`}
+                image={`/${productType}/${product}.png`}
                 alt="random"
               />
               <CardContent sx={{ flexGrow: 1 }}>

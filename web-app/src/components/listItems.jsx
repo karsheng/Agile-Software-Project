@@ -2,22 +2,28 @@ import * as React from "react";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import DashboardIcon from "@mui/icons-material/Dashboard";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import ShowChartIcon from "@mui/icons-material/ShowChart";
 import LogoutIcon from "@mui/icons-material/Logout";
 import app from "../base.js";
 import { Link } from "react-router-dom";
-import { REDIRECT } from "../constants.js";
 
 export const mainListItems = (
   <React.Fragment>
-    <ListItemButton>
+    <ListItemButton component={Link} to="/watchlist">
       <ListItemIcon>
-        <DashboardIcon />
+        <VisibilityIcon />
       </ListItemIcon>
-      <ListItemText primary="Dashboard" />
+      <ListItemText primary="Watch List" />
     </ListItemButton>
-    <ListItemButton component={Link} to={REDIRECT}>
+    <ListItemButton component={Link} to="/stocks">
+      <ListItemIcon>
+        <ShowChartIcon />
+      </ListItemIcon>
+      <ListItemText primary="Stocks" />
+    </ListItemButton>
+    <ListItemButton component={Link} to="/cryptos">
       <ListItemIcon>
         <MonetizationOnIcon />
       </ListItemIcon>

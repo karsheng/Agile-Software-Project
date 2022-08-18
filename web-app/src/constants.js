@@ -12,3 +12,7 @@ export const cryptoList = {
     'dot': {fullName: 'Polkadot', disabled: false},
     'shib': {fullName: 'Shiba Inu', disabled: false},
 }
+export const stockList = {
+    'appl': {fullName: 'Apple', disabled: false},
+    'goog': {fullName: 'Google', disabled: false},
+}
