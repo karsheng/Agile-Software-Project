@@ -18,6 +18,7 @@ const NewsSection = ({
   toDate,
   product,
   productName,
+  productType,
   sentimentLoading,
   layout,
   publishers,
@@ -133,6 +134,7 @@ const NewsSection = ({
                 product={product}
                 productName={productName}
                 size={30}
+                productType={productType}
               />
               <span>{` ${productName} from ${fromDate.substring(
                 0,

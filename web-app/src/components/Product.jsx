@@ -24,7 +24,7 @@ import TwitterSection from "../components/TwitterSection";
 import SectionTitle from "../components/SectionTitle";
 import NewsSection from "../components/NewsSection";
 
-const Product = ({ productList }) => {
+const Product = ({ productList, productType }) => {
   const [metrics, setMetrics] = useState({});
   const [metricsLoading, setMetricsLoading] = useState(false);
 
@@ -271,7 +271,12 @@ const Product = ({ productList }) => {
         sx={{ flexGrow: 1 }}
       >
         <Stack direction="row" spacing={1}>
-          <ProductLogo product={product} productName={productName} size={30} />
+          <ProductLogo
+            product={product}
+            productName={productName}
+            productType={productType}
+            size={30}
+          />
           <span>{productName} Dashboard</span>
         </Stack>
       </Typography>
@@ -307,7 +312,16 @@ const Product = ({ productList }) => {
               icon={<AttachMoneyIcon fontSize="large" />}
             />
           ) : (
-            <CircularProgress />
+            <Paper
+              sx={{
+                p: 2,
+                alignItems: "center",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <CircularProgress />
+            </Paper>
           )}
         </Grid>
         <Grid item xs={12} md={4} lg={4}>
@@ -322,7 +336,16 @@ const Product = ({ productList }) => {
               icon={<TwitterIcon fontSize="large" />}
             />
           ) : (
-            <CircularProgress />
+            <Paper
+              sx={{
+                p: 2,
+                alignItems: "center",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <CircularProgress />
+            </Paper>
           )}
         </Grid>
         <Grid item xs={12} md={4} lg={4}>
@@ -337,7 +360,16 @@ const Product = ({ productList }) => {
               icon={<NewspaperIcon fontSize="large" />}
             />
           ) : (
-            <CircularProgress />
+            <Paper
+              sx={{
+                p: 2,
+                alignItems: "center",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <CircularProgress />
+            </Paper>
           )}
         </Grid>
         {/* Price and Sentiments Plot */}
@@ -348,6 +380,7 @@ const Product = ({ productList }) => {
                 <ProductLogo
                   product={product}
                   productName={productName}
+                  productType={productType}
                   size={36}
                 />
                 <span>{productName} Price & Sentiments</span>
@@ -397,6 +430,7 @@ const Product = ({ productList }) => {
           toDate={toDate}
           product={product}
           productName={productName}
+          productType={productType}
           sentimentLoading={sentimentLoading}
         />
         <NewsSection
@@ -406,6 +440,7 @@ const Product = ({ productList }) => {
           toDate={toDate}
           product={product}
           productName={productName}
+          productType={productType}
           sentimentLoading={newsLoading}
           publishers={publishers ? publishers : []}
         />
