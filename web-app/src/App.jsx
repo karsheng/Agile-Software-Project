@@ -12,6 +12,7 @@ import StockList from "./pages/StockList";
 import StockDashboard from "./pages/StockDashboard";
 import Home from "./pages/Home";
 import ForgetPassword from "./pages/ForgetPassword";
+import WatchList from "./pages/WatchList";
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
           <PrivateRoute exact path="/cryptos" component={CryptoList} />
           <PrivateRoute exact path="/stocks/:id" component={StockDashboard} />
           <PrivateRoute exact path="/stocks" component={StockList} />
+          <PrivateRoute exact path="/watchlist" component={WatchList} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/forget" component={ForgetPassword} />
           <Route exact path="/signup" component={SignUp} />
