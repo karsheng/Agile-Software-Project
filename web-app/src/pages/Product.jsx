@@ -199,6 +199,7 @@ const Product = () => {
           if (data.error) throw data.error;
           const { fig, publishers } = data;
           setNewsData(fig);
+          setFilteredNewsData(fig.data);
           setPublishers(publishers);
         })
         .catch((e) => {
