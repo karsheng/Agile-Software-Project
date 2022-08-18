@@ -140,12 +140,15 @@ def get_metrics():
     try:
         args = request.args
         product = args.get('product')
+
+        # price
         ref1 = db.reference(
             f'cryptos/{product}/prices').order_by_child('date').limit_to_last(7)
         prices = pd.DataFrame(ref1.get().values())
         new_price, old_price = prices['price (USD)'].iloc[-1], prices['price (USD)'].iloc[0]
         price_pct = new_price/old_price*100 if old_price != 0 else 0
 
+        # tweets
         ref2 = db.reference(
             f'cryptos/{product}/polarity').order_by_child('date').limit_to_last(7)
         tweets_polarity = pd.DataFrame(ref2.get().values())
@@ -153,8 +156,15 @@ def get_metrics():
             -1], tweets_polarity['weighted_polarity'].iloc[0]
         tpolarity_pct = new_tpolarity/old_tpolarity*100 if old_tpolarity != 0 else 0
 
-        new_npolarity = -0.74567
-        npolarity_pct = -27.3545
+        # news
+        ref3 = db.reference(
+            f'cryptos/{product}/news_polarity').order_by_child('date').limit_to_last(7)
+        news_polarity = pd.DataFrame(ref3.get().values())
+
+        new_npolarity, old_npolarity = news_polarity['polarity'].iloc[
+            -1], news_polarity['polarity'].iloc[0]
+        npolarity_pct = new_npolarity/old_npolarity*100 if old_npolarity != 0 else 0
+
         return {
             'prices': {
                 'currentValue': new_price,
