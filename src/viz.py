@@ -6,23 +6,29 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 
-def subjectivity_polarity_plot(tweets: pd.DataFrame) -> go.Figure:
+def subjectivity_polarity_plot(df: pd.DataFrame, hover_name: str, hover_data: List[str], size: np.array = None) -> go.Figure:
     """
     Plots a bubble chart of subjectivity vs. polarity
     """
-    fig = px.scatter(tweets,
+
+    bubble_size = [2] * df.shape[0]
+    if size is not None:
+        bubble_size = size
+    fig = px.scatter(df,
                      x="polarity", y="subjectivity",
-                     size=np.log(tweets["user_followers"]+2) / np.log(1.1), color="sentiment",
+                     size=bubble_size, color="sentiment",
                      color_discrete_sequence=["#00CC96", "#636EFA", "#EF553B"],
-                     hover_name="text",
-                     hover_data=['date', 'user_followers'],
+                     hover_name=hover_name,
+                     hover_data=hover_data,
                      size_max=40)
-    fig.update_layout(yaxis_range=[-0.2, 1.2], xaxis_range=[-1.2, 1.2])
+
+    fig.update_layout(
+        yaxis_range=[-0.2, 1.2], xaxis_range=[-1.2, 1.2], xaxis_title='Polarity', yaxis_title='Subjectivity')
 
     return fig
 
 
-def price_polarity_plot(prices: pd.Series, polarity: pd.Series, rise_timestamps: List, crash_timestamps: List) -> go.Figure:
+def price_polarity_plot(prices: pd.Series, tweets_polarity: pd.Series, news_polarity: pd.Series, rise_timestamps: List, crash_timestamps: List) -> go.Figure:
     # Create figure with secondary y-axis
     fig = make_subplots(specs=[[{"secondary_y": True}]])
 
@@ -33,8 +39,14 @@ def price_polarity_plot(prices: pd.Series, polarity: pd.Series, rise_timestamps:
     )
 
     fig.add_trace(
-        go.Scatter(x=polarity.index, y=polarity, name="tweets polarity",
-                   line=dict(color='rgba(0, 0, 0, 0.25)', width=3, dash='dot')),
+        go.Scatter(x=tweets_polarity.index, y=tweets_polarity, name="tweets polarity",
+                   line=dict(color='rgba(0, 255, 0, 0.4)', width=3, dash='dot')),
+        secondary_y=True,
+    )
+
+    fig.add_trace(
+        go.Scatter(x=news_polarity.index, y=news_polarity, name="news polarity",
+                   line=dict(color='rgba(255, 0, 0, 0.4)', width=3, dash='dot')),
         secondary_y=True,
     )
 

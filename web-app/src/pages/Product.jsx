@@ -10,12 +10,9 @@ import CircularProgress from "@mui/material/CircularProgress";
 import DateSelector from "../components/DateSelector";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import TopTweets from "../components/TopTweets";
-import ThumbDownIcon from "@mui/icons-material/ThumbDown";
-import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import Layout from "../components/Layout";
 import { productList } from "../constants";
-import Divider from "@mui/material/Divider";
+import AnalyticsIcon from "@mui/icons-material/Analytics";
 import MessageBar from "../components/MessageBar";
 import Metrics from "../components/Metrics";
 import ProductLogo from "../components/ProductLogo";
@@ -24,30 +21,42 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import NewspaperIcon from "@mui/icons-material/Newspaper";
+import TwitterSection from "../components/TwitterSection";
+import SectionTitle from "../components/SectionTitle";
+import NewsSection from "../components/NewsSection";
 
 const Product = () => {
   const [metrics, setMetrics] = useState({});
   const [metricsLoading, setMetricsLoading] = useState(false);
+
   const [priceData, setPriceData] = useState({});
-  const [sentimentData, setSentimentData] = useState({});
   const [priceLoading, setPriceLoading] = useState(false);
+
+  const [sentimentData, setSentimentData] = useState({});
   const [sentimentLoading, setSentimentLoading] = useState(false);
   const [filteredSentimentData, setFilteredSentimentData] = useState(null);
-  const { id: product } = useParams();
-  const productName = productList[product].fullName;
+
+  const [newsData, setNewsData] = useState({});
+  const [newsLoading, setNewsLoading] = useState(false);
+  const [filteredNewsData, setFilteredNewsData] = useState(null);
+  const [publishers, setPublishers] = useState(null);
 
   const d = new Date();
   d.setHours(22);
   const [endDate, setEndDate] = useState(d.toISOString().substring(0, 10));
   d.setMonth(d.getMonth() - 1);
   const [startDate, setStartDate] = useState(d.toISOString().substring(0, 10));
-  const { currentUser } = useContext(AuthContext);
-
   const [fromDate, setFromDate] = useState(startDate);
   const [toDate, setToDate] = useState(endDate);
+  const maxDate = new Date(endDate);
+  maxDate.setDate(maxDate.getDate() - 7);
 
   const [messageBarOpen, setMessageBarOpen] = useState(false);
   const [message, setMessage] = useState(null);
+
+  const { currentUser } = useContext(AuthContext);
+
+  const { id: product } = useParams();
 
   if (!currentUser) {
     return <Redirect to="/" />;
@@ -56,73 +65,61 @@ const Product = () => {
   if (products.findIndex((p) => p === product) < 0) {
     return <Redirect to="/error" />;
   }
+  const productName = productList[product].fullName;
 
-  const handleRelayout = (e) => {
-    if (sentimentData.data && !sentimentLoading) {
-      if (e["xaxis.range[0]"] && e["xaxis.range[1]"]) {
-        const fd = e["xaxis.range[0]"];
-        const td = e["xaxis.range[1]"];
-        setFromDate(fd);
-        setToDate(td);
-        const { data } = sentimentData;
-        const indices = [];
+  const getSplicedData = (data, fd, td) => {
+    const indices = [];
+    data.forEach((d) => {
+      const idx = [];
 
-        data.forEach((d) => {
-          const idx = [];
-
-          idx.push(d["customdata"].findIndex((x) => x[0] >= fd && x[0] <= td));
-          idx.push(
-            d["customdata"].findLastIndex((x) => x[0] >= fd && x[0] <= td)
-          );
-          indices.push(idx);
-        });
-
-        const splicedData = data.map((d, i) => ({
-          ...d,
-          customdata: d["customdata"].slice(indices[i][0], indices[i][1]),
-          hovertext: d["hovertext"].slice(indices[i][0], indices[i][1]),
-          x: d["x"].slice(indices[i][0], indices[i][1]),
-          y: d["y"].slice(indices[i][0], indices[i][1]),
-          marker: {
-            ...d["marker"],
-            size: d["marker"].size.slice(indices[i][0], indices[i][1]),
-          },
-        }));
-
-        setFilteredSentimentData(splicedData);
-        setMessage(`${fd.substring(0, 10)} to ${td.substring(0, 10)} selected`);
-        setMessageBarOpen(true);
-      }
-
-      if (e["xaxis.autorange"] || e["yaxis.autorange"]) {
-        setFilteredSentimentData(sentimentData.data);
-        const fd = priceData.layout.xaxis.range[0];
-        const td = priceData.layout.xaxis.range[1];
-
-        setFromDate(fd);
-        setToDate(td);
-        setMessage(`${fd.substring(0, 10)} to ${td.substring(0, 10)} selected`);
-        setMessageBarOpen(true);
-      }
-    }
-  };
-
-  const getTopTweets = (data) => {
-    const followers = data["customdata"].map((d) => d[1]);
-    const followersSorted = followers.slice().sort((a, b) => a - b);
-    followersSorted.reverse();
-
-    const topTweets = followersSorted.map((x, id) => {
-      const i = followers.findIndex((y) => y === x);
-      return {
-        id: id,
-        text: data["hovertext"][i],
-        followers: followers[i],
-        polarity: data["x"][i],
-      };
+      idx.push(d["customdata"].findIndex((x) => x[0] >= fd && x[0] <= td));
+      idx.push(d["customdata"].findLastIndex((x) => x[0] >= fd && x[0] <= td));
+      indices.push(idx);
     });
 
-    return topTweets;
+    const splicedData = data.map((d, i) => ({
+      ...d,
+      customdata: d["customdata"].slice(indices[i][0], indices[i][1]),
+      hovertext: d["hovertext"].slice(indices[i][0], indices[i][1]),
+      x: d["x"].slice(indices[i][0], indices[i][1]),
+      y: d["y"].slice(indices[i][0], indices[i][1]),
+      marker: {
+        ...d["marker"],
+        size: d["marker"].size.slice(indices[i][0], indices[i][1]),
+      },
+    }));
+
+    return splicedData;
+  };
+
+  const handleRelayout = (e) => {
+    let fd = fromDate;
+    let td = toDate;
+
+    if (e["xaxis.range[0]"] && e["xaxis.range[1]"]) {
+      fd = e["xaxis.range[0]"];
+      td = e["xaxis.range[1]"];
+      setMessage(`${fd.substring(0, 10)} to ${td.substring(0, 10)} selected`);
+      setMessageBarOpen(true);
+    }
+
+    if (e["xaxis.autorange"] || e["yaxis.autorange"]) {
+      fd = priceData.layout.xaxis.range[0];
+      td = priceData.layout.xaxis.range[1];
+      setMessage(`${fd.substring(0, 10)} to ${td.substring(0, 10)} selected`);
+      setMessageBarOpen(true);
+    }
+
+    setFromDate(fd);
+    setToDate(td);
+
+    if (sentimentData.data && !sentimentLoading) {
+      setFilteredSentimentData(getSplicedData(sentimentData.data, fd, td));
+    }
+
+    if (newsData.data && !newsLoading) {
+      setFilteredNewsData(getSplicedData(newsData.data, fd, td));
+    }
   };
 
   const getData = () => {
@@ -132,6 +129,11 @@ const Product = () => {
       };
       const start = new Date(startDate);
       const end = new Date(endDate);
+
+      if (start > maxDate) {
+        alert("Please select a valid date range");
+        return;
+      }
       start.setHours(22);
       end.setHours(22);
 
@@ -140,6 +142,7 @@ const Product = () => {
 
       setPriceLoading(true);
       setSentimentLoading(true);
+      setNewsLoading(true);
       setMetricsLoading(true);
 
       fetch(
@@ -150,34 +153,74 @@ const Product = () => {
       )
         .then((res) => res.json())
         .then((data) => {
+          if (data.error) throw data.error;
           setPriceData(data);
           const dates = data.data[0].x;
           setStartDate(dates[0]);
           setEndDate(dates[dates.length - 1]);
+          setFromDate(dates[0]);
+          setToDate(dates[dates.length - 1]);
+        })
+        .catch((e) => {
+          alert(e);
+          setPriceData({ data: [], layout: {} });
         })
         .finally(() => {
           setPriceLoading(false);
         });
 
       fetch(
-        `/api/sentiment?product=${product}&start=${startString}&end=${endString}`,
+        `/api/tweets_sentiment?product=${product}&start=${startString}&end=${endString}`,
         {
           headers: headers,
         }
       )
         .then((res) => res.json())
         .then((data) => {
+          if (data.error) throw data.error;
           setSentimentData(data);
+        })
+        .catch((e) => {
+          alert(e);
+          setSentimentData({ data: [], layout: {} });
         })
         .finally(() => {
           setSentimentLoading(false);
         });
+
+      fetch(
+        `/api/news_sentiment?product=${product}&start=${startString}&end=${endString}`,
+        {
+          headers: headers,
+        }
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.error) throw data.error;
+          const { fig, publishers } = data;
+          setNewsData(fig);
+          setFilteredNewsData(fig.data);
+          setPublishers(publishers);
+        })
+        .catch((e) => {
+          alert(e);
+          setNewsData({ data: [], layout: {} });
+          setPublishers([]);
+        })
+        .finally(() => {
+          setNewsLoading(false);
+        });
+
       fetch(`/api/metrics?product=${product}`, {
         headers: headers,
       })
         .then((res) => res.json())
         .then((data) => {
+          if (data.error) throw data.error;
           setMetrics(data);
+        })
+        .catch((e) => {
+          alert(e);
         })
         .finally(() => {
           setMetricsLoading(false);
@@ -186,7 +229,12 @@ const Product = () => {
   };
 
   const metricsProps = (title, data) => {
-    const { currentValue, percentage } = data;
+    let currentValue = "-";
+    let percentage = "-";
+    if (data) {
+      currentValue = data.currentValue;
+      percentage = data.percentage;
+    }
     return {
       title,
       value: currentValue,
@@ -233,18 +281,30 @@ const Product = () => {
   return (
     <Layout title={<Title />}>
       <Stack sx={{ mb: 2 }} spacing={1} direction="row">
-        <DateSelector label="Start" setValue={setStartDate} value={startDate} />
+        <DateSelector
+          label="Start"
+          setValue={setStartDate}
+          value={startDate}
+          maxDate={maxDate}
+        />
         <DateSelector label="End" setValue={setEndDate} value={endDate} />
         <Button onClick={getData} size="large" variant="contained">
           Get Data
         </Button>
       </Stack>
+      <SectionTitle typoComponent="h1" variant="h4">
+        <Stack sx={{ mb: 2 }} spacing={1} direction="row">
+          <AnalyticsIcon fontSize="large" />
+          <div> Key Metrics</div>
+        </Stack>
+      </SectionTitle>
       <Grid container spacing={3}>
+        {/* Metrics */}
         <Grid item xs={12} md={4} lg={4}>
-          {metrics.prices && !metricsLoading ? (
+          {!metricsLoading ? (
             <Metrics
               {...metricsProps("Current Price", metrics.prices)}
-              value={`$ ${metrics.prices.currentValue}`}
+              value={metrics.prices ? `$ ${metrics.prices.currentValue}` : "-"}
               icon={<AttachMoneyIcon fontSize="large" />}
             />
           ) : (
@@ -252,38 +312,39 @@ const Product = () => {
           )}
         </Grid>
         <Grid item xs={12} md={4} lg={4}>
-          {metrics.tweets && !metricsLoading ? (
+          {!metricsLoading ? (
             <Metrics
               {...metricsProps("Tweets Sentiment", metrics.tweets)}
-              value={sentimentCategory(metrics.tweets.currentValue)}
-              icon={
-                <TwitterIcon style={{ color: "#00acee" }} fontSize="large" />
+              value={
+                metrics.tweets
+                  ? sentimentCategory(metrics.tweets.currentValue)
+                  : "-"
               }
+              icon={<TwitterIcon fontSize="large" />}
             />
           ) : (
             <CircularProgress />
           )}
         </Grid>
         <Grid item xs={12} md={4} lg={4}>
-          {metrics.news && !metricsLoading ? (
+          {!metricsLoading ? (
             <Metrics
               {...metricsProps("News Sentiment", metrics.news)}
-              value={sentimentCategory(metrics.news.currentValue)}
+              value={
+                metrics.news
+                  ? sentimentCategory(metrics.news.currentValue)
+                  : "-"
+              }
               icon={<NewspaperIcon fontSize="large" />}
             />
           ) : (
             <CircularProgress />
           )}
         </Grid>
+        {/* Price and Sentiments Plot */}
         <Grid item xs={12}>
           <Grid item xs={12}>
-            <Typography
-              component="h1"
-              variant="h4"
-              color="inherit"
-              noWrap
-              sx={{ flexGrow: 1, p: 2 }}
-            >
+            <SectionTitle typoComponent="h1" variant="h4">
               <Stack direction="row" spacing={1}>
                 <ProductLogo
                   product={product}
@@ -292,10 +353,8 @@ const Product = () => {
                 />
                 <span>{productName} Price & Sentiments</span>
               </Stack>
-            </Typography>
-            <Divider light />
+            </SectionTitle>
           </Grid>
-          <Divider light />
           <br />
           <Paper
             sx={{
@@ -328,149 +387,29 @@ const Product = () => {
             )}
           </Paper>
         </Grid>
-        <Grid item xs={12}>
-          <Typography
-            component="h2"
-            variant="h5"
-            color="inherit"
-            noWrap
-            sx={{ flexGrow: 1, p: 1 }}
-          >
-            <TwitterIcon style={{ color: "#00acee" }} fontSize="large" />{" "}
-            Twitter Section
-          </Typography>
-          <Paper
-            sx={{
-              p: 2,
-              alignItems: "center",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <Typography
-              component="h2"
-              variant="h5"
-              color="inherit"
-              noWrap
-              sx={{ flexGrow: 1 }}
-            >
-              <Stack direction="row" spacing={1}>
-                <span>Tweets Sentiment on </span>
-                <ProductLogo
-                  product={product}
-                  productName={productName}
-                  size={30}
-                />
-                <span>{` ${productName} from ${fromDate.substring(
-                  0,
-                  10
-                )} - ${toDate.substring(0, 10)}`}</span>
-              </Stack>
-            </Typography>
-            {sentimentData.data && !sentimentLoading ? (
-              <Plot
-                data={
-                  filteredSentimentData
-                    ? filteredSentimentData
-                    : sentimentData.data
-                }
-                useResizeHandler={true}
-                layout={{
-                  ...sentimentData.layout,
-                  margin: {
-                    l: 50,
-                    r: 50,
-                    b: 50,
-                    t: 30,
-                    pad: 4,
-                  },
-                  autosize: true,
-                }}
-                style={{ width: "100%" }}
-              />
-            ) : (
-              <CircularProgress />
-            )}
-          </Paper>
-        </Grid>
-        <Grid item xs={12} md={6} lg={6}>
-          <Paper
-            sx={{
-              p: 2,
-              alignItems: "center",
-            }}
-          >
-            <Typography
-              component="h2"
-              variant="h5"
-              color="inherit"
-              noWrap
-              sx={{ flexGrow: 1, p: 2 }}
-            >
-              Negative Tweets <ThumbDownIcon color="error" />
-            </Typography>
-            {sentimentData.data && !sentimentLoading ? (
-              <div>
-                <TopTweets
-                  rows={
-                    filteredSentimentData
-                      ? getTopTweets(filteredSentimentData[2])
-                      : getTopTweets(sentimentData.data[2])
-                  }
-                />
-              </div>
-            ) : (
-              <Stack
-                sx={{
-                  alignItems: "center",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <CircularProgress />
-              </Stack>
-            )}
-          </Paper>
-        </Grid>
-        <Grid item xs={12} md={6} lg={6}>
-          <Paper
-            sx={{
-              p: 2,
-              alignItems: "center",
-            }}
-          >
-            <Typography
-              component="h2"
-              variant="h5"
-              color="inherit"
-              noWrap
-              sx={{ flexGrow: 1, p: 2 }}
-            >
-              Positive Tweets <ThumbUpIcon color="success" />
-            </Typography>
-            {sentimentData.data && !sentimentLoading ? (
-              <div>
-                <TopTweets
-                  rows={
-                    filteredSentimentData
-                      ? getTopTweets(filteredSentimentData[0])
-                      : getTopTweets(sentimentData.data[0])
-                  }
-                />
-              </div>
-            ) : (
-              <Stack
-                sx={{
-                  alignItems: "center",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <CircularProgress />
-              </Stack>
-            )}
-          </Paper>
-        </Grid>
+        {/* Twitter Section */}
+        <TwitterSection
+          sentimentData={
+            filteredSentimentData ? filteredSentimentData : sentimentData.data
+          }
+          layout={sentimentData.layout}
+          filteredSentimentData={filteredSentimentData}
+          fromDate={fromDate}
+          toDate={toDate}
+          product={product}
+          productName={productName}
+          sentimentLoading={sentimentLoading}
+        />
+        <NewsSection
+          sentimentData={filteredNewsData ? filteredNewsData : newsData.data}
+          layout={newsData.layout}
+          fromDate={fromDate}
+          toDate={toDate}
+          product={product}
+          productName={productName}
+          sentimentLoading={newsLoading}
+          publishers={publishers ? publishers : []}
+        />
       </Grid>
       <MessageBar
         open={messageBarOpen}

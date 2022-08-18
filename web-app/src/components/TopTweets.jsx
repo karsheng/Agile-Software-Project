@@ -20,7 +20,6 @@ const TopTweets = ({ rows }) => {
         columns={columns}
         pageSize={5}
         rowsPerPageOptions={[5]}
-        cellMouseUp={(x) => console.log(x)}
       />
     </div>
   );
