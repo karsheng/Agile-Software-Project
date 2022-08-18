@@ -66,22 +66,6 @@ const ProductGrid = ({ productList, productType, showAll }) => {
             flexDirection: "column",
           }}
         >
-          {productList[product].disabled ? (
-            <p
-              style={{
-                zIndex: 1000,
-                backgroundColor: "grey",
-                position: "relative",
-                width: "100%",
-                textAlign: "center",
-                fontSize: "20px",
-                color: "white",
-              }}
-            >
-              <div>Not available</div>
-            </p>
-          ) : null}
-
           <CardMedia
             component="img"
             sx={{
@@ -120,7 +104,9 @@ const ProductGrid = ({ productList, productType, showAll }) => {
 
   return (
     <Grid container spacing={3}>
-      {selected.size > 0 ? renderProducts(products) : renderNoProducts()}
+      {selected.size > 0 || showAll
+        ? renderProducts(products)
+        : renderNoProducts()}
     </Grid>
   );
 };
