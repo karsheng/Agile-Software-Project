@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
@@ -9,9 +9,34 @@ import Typography from "@mui/material/Typography";
 import Layout from "../components/Layout";
 import Switch from "@mui/material/Switch";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../Auth.js";
+import app from "../base";
 
 const Products = ({ productList, title, productType }) => {
   const products = Object.keys(productList);
+  const { currentUser } = useContext(AuthContext);
+  const [selected, setSelected] = useState(new Set());
+
+  const { uid } = currentUser;
+  const ref = app.database().ref(`users/${uid}/${productType}`);
+
+  useEffect(() => {
+    ref.once("value", (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        setSelected(new Set(data.split(",")));
+      }
+    });
+  }, []);
+
+  const handleOnChange = (e, checked) => {
+    const { id } = e.target;
+    const temp = new Set(selected);
+    checked ? temp.add(id) : temp.delete(id);
+    const newSelected = Array.from(temp).join(",");
+    ref.set(newSelected);
+    setSelected(temp);
+  };
 
   const Title = () => {
     return (
@@ -56,7 +81,12 @@ const Products = ({ productList, title, productType }) => {
               </CardContent>
               <CardActions sx={{ p: 2 }}>
                 Add to Watchlist
-                <Switch size="big" />
+                <Switch
+                  checked={selected.has(product)}
+                  id={product}
+                  onChange={handleOnChange}
+                  size="big"
+                />
                 <Button component={Link} to={`/${productType}/${product}`}>
                   View
                 </Button>
