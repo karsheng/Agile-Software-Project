@@ -5,9 +5,9 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import { AuthProvider } from "./Auth";
 import PrivateRoute from "./PrivateRoute";
-import Product from "./pages/Product";
 import Page404 from "./pages/Page404";
-import CryptoPage from "./pages/CryptoPage";
+import CryptoList from "./pages/CryptoList";
+import CryptoDashboard from "./pages/CryptoDashboard";
 import Home from "./pages/Home";
 import ForgetPassword from "./pages/ForgetPassword";
 
@@ -16,8 +16,8 @@ const App = () => {
     <AuthProvider>
       <Router>
         <Switch>
-          <PrivateRoute exact path="/product/:id" component={Product} />
-          <PrivateRoute exact path="/cryptos" component={CryptoPage} />
+          <PrivateRoute exact path="/cryptos/:id" component={CryptoDashboard} />
+          <PrivateRoute exact path="/cryptos" component={CryptoList} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/forget" component={ForgetPassword} />
           <Route exact path="/signup" component={SignUp} />

@@ -11,7 +11,6 @@ import DateSelector from "../components/DateSelector";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Layout from "../components/Layout";
-import { productList } from "../constants";
 import AnalyticsIcon from "@mui/icons-material/Analytics";
 import MessageBar from "../components/MessageBar";
 import Metrics from "../components/Metrics";
@@ -25,7 +24,7 @@ import TwitterSection from "../components/TwitterSection";
 import SectionTitle from "../components/SectionTitle";
 import NewsSection from "../components/NewsSection";
 
-const Product = () => {
+const Product = ({ productList }) => {
   const [metrics, setMetrics] = useState({});
   const [metricsLoading, setMetricsLoading] = useState(false);
 

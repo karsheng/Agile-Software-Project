@@ -10,7 +10,7 @@ import Layout from "../components/Layout";
 import Switch from "@mui/material/Switch";
 import { Link } from "react-router-dom";
 
-const Products = ({ productList, title }) => {
+const Products = ({ productList, title, productType }) => {
   const products = Object.keys(productList);
 
   const Title = () => {
@@ -57,7 +57,7 @@ const Products = ({ productList, title }) => {
               <CardActions sx={{ p: 2 }}>
                 Add to Watchlist
                 <Switch size="big" />
-                <Button component={Link} to={`/product/${product}`}>
+                <Button component={Link} to={`/${productType}/${product}`}>
                   View
                 </Button>
               </CardActions>
