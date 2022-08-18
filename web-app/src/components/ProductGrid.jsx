@@ -66,6 +66,22 @@ const ProductGrid = ({ productList, productType, showAll }) => {
             flexDirection: "column",
           }}
         >
+          {productList[product].disabled ? (
+            <p
+              style={{
+                zIndex: 1000,
+                backgroundColor: "grey",
+                position: "relative",
+                width: "100%",
+                textAlign: "center",
+                fontSize: "20px",
+                color: "white",
+              }}
+            >
+              <div>Not available</div>
+            </p>
+          ) : null}
+
           <CardMedia
             component="img"
             sx={{
@@ -87,8 +103,13 @@ const ProductGrid = ({ productList, productType, showAll }) => {
               id={product}
               onChange={handleOnChange}
               size="big"
+              disabled={productList[product].disabled}
             />
-            <Button component={Link} to={`/${productType}/${product}`}>
+            <Button
+              disabled={productList[product].disabled}
+              component={Link}
+              to={`/${productType}/${product}`}
+            >
               View
             </Button>
           </CardActions>
