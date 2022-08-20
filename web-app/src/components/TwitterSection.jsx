@@ -11,6 +11,8 @@ import ProductLogo from "./ProductLogo";
 import Plot from "react-plotly.js";
 import CircularProgress from "@mui/material/CircularProgress";
 import SectionTitle from "./SectionTitle";
+import BasicModal from "./Modal";
+import { modalInfo } from "../config";
 
 const TwitterSection = ({
   sentimentData,
@@ -43,7 +45,12 @@ const TwitterSection = ({
       <Grid item xs={12}>
         <SectionTitle typoComponent="h1" variant="h4">
           <Stack sx={{ mb: 2 }} spacing={1} direction="row">
-            <TwitterIcon fontSize="large" /> <div>Twitter Section</div>
+            <TwitterIcon fontSize="large" />
+             <div>Twitter Section</div>
+             <BasicModal
+              title = {modalInfo.tweeterSection.title}
+              message = {modalInfo.tweeterSection.message}
+             />
           </Stack>
         </SectionTitle>
         <Paper
@@ -105,7 +112,12 @@ const TwitterSection = ({
         >
           <SectionTitle typoComponent="h2" variant="h5">
             <Stack spacing={1} direction="row">
-              <ThumbDownIcon /> <div>Negative Tweets</div>
+              <ThumbDownIcon /> 
+              <div>Negative Tweets</div>
+              <BasicModal
+              title = {modalInfo.negativeTweet.title}
+              message = {modalInfo.negativeTweet.message}
+              />
             </Stack>
           </SectionTitle>
           {sentimentData && !sentimentLoading ? (
@@ -138,7 +150,12 @@ const TwitterSection = ({
         >
           <SectionTitle typoComponent="h2" variant="h5">
             <Stack spacing={1} direction="row">
-              <ThumbUpIcon /> <div>Positive Tweets</div>
+              <ThumbUpIcon /> 
+              <div>Positive Tweets</div>
+              <BasicModal
+                title = {modalInfo.positiveTweet.title}
+                message = {modalInfo.positiveTweet.message}
+              />
             </Stack>
           </SectionTitle>
           {sentimentData && !sentimentLoading ? (
