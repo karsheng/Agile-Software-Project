@@ -1,9 +1,9 @@
 import * as React from 'react';
-import NewsSection from './components/NewsSection';
+
 
 const keyMetricsMsg = () => {
   return <div>
-    <img src='/imgs/guides/currentPrice.png' />
+    <img src='/imgs/guides/currentPrice.png'/>
     <p>This segment displays the current price of the selected cryptocurrency 
       and the fluctuation it has under gone in the last week by percentage.</p>
     <br />
