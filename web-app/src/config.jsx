@@ -3,14 +3,14 @@ import * as React from 'react';
 
 const keyMetricsMsg = () => {
   return <div>
-    <img src='/imgs/guides/currentPrice.png'/>
+    <img src='/imgs/guides/currentPrice.png' alt="Current Price segment view"/>
     <p>This segment displays the current price of the selected cryptocurrency 
       and the fluctuation it has under gone in the last week by percentage.</p>
     <br />
-    <img src="/imgs/guides/tweetsSentiment.png"/>
+    <img src="/imgs/guides/tweetsSentiment.png" alt="Tweet Sentiment indicator segment view"/>
     <p>This segment displays the sentiment indicator (positive or negative) based on the
       tweets of the selected time period.</p>
-    <img src="/imgs/guides/newsSentiment.png"/>
+    <img src="/imgs/guides/newsSentiment.png" alt="News Sentiment indicator segment view"/>
     <p>This segment displays the sentiment indicator (positive or negative) based on the
       news of the selected time period.</p>
   </div>
@@ -26,7 +26,9 @@ const priceAndSentimentMsg = () => {
       tracks Tweets from the selected time period. This graph compares price to 
       tweet predictions. Prediction can be made on how the price has fluctuated 
       compared to how positive and negative tweets about the selected cryptocurrency.</p>
-      <img src="/imgs/guides/priceAndSentiments.png"/>
+      <img 
+        src="/imgs/guides/priceAndSentiments.png"
+        alt="Price and Sentiment segment view highlighting how to select an area to zoom"/>
       <p>An area of the graph can be enhanced by clicking on the graph and dragging rectangle over 
         the area that you wish to enhance. This will zoom in on the selected area. See the tool on 
         the top right for the Autoscale button to zoom out</p>
@@ -39,7 +41,9 @@ const tweeterSectionMsg = () => {
       Green dots are positive tweets. Blue dots are neutral Tweets. Red dots are
       Negative tweets. Hover the mouse over any of the dots to see more information and
       the tweeted posted.</p>
-      <img src="/imgs/guides/tSentiments.png"/>
+      <img 
+        src="/imgs/guides/tSentiments.png" 
+        alt="Tweets Sentiment segment view highlighting how to select an area to zoom"/>
       <p>An area of the graph can be enhanced by clicking on the graph and dragging 
         rectangle over the area that you wish to enhance. This will zoom in on the selected area.
         See the tool on the top right for the Autoscale button to zoom out</p>
@@ -53,7 +57,10 @@ const newsSectionMsg = () => {
       Green dots are positive news. Blue dots are neutral news. Red dots are
       Negative news. Hover the mouse over any of the dots to see more information and
       the news posted.</p>
-      <img src="/imgs/guides/tSentiments.png"/>
+      <img 
+        src="/imgs/guides/tSentiments.png"
+        alt="News sentiment segment view highlighting how to select an area to zoom"
+      />
       <p>An area of the graph can be enhanced by clicking on the graph and dragging 
         rectangle over the area that you wish to enhance. This will zoom in on the selected area.
         See the tool on the top right for the Autoscale button to zoom out</p>

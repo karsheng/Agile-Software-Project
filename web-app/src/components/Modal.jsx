@@ -20,7 +20,7 @@ const style = {
   height: '50%'
 };
 
-const BasicModal = (props) => {
+const GuideModal = (props) => {
   const {title, message} = props;
 
   const [open, setOpen] = React.useState(false);
@@ -52,4 +52,4 @@ const BasicModal = (props) => {
     </div>
   );
 }
-export default BasicModal;
+export default GuideModal;

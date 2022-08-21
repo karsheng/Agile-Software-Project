@@ -11,7 +11,7 @@ import ProductLogo from "./ProductLogo";
 import Plot from "react-plotly.js";
 import CircularProgress from "@mui/material/CircularProgress";
 import SectionTitle from "./SectionTitle";
-import BasicModal from "./Modal";
+import GuideModal from "./Modal";
 import { modalInfo } from "../config";
 
 const TwitterSection = ({
@@ -47,7 +47,7 @@ const TwitterSection = ({
           <Stack sx={{ mb: 2 }} spacing={1} direction="row">
             <TwitterIcon fontSize="large" />
              <div>Twitter Section</div>
-             <BasicModal
+             <GuideModal
               title = {modalInfo.tweeterSection.title}
               message = {modalInfo.tweeterSection.message}
              />
@@ -114,7 +114,7 @@ const TwitterSection = ({
             <Stack spacing={1} direction="row">
               <ThumbDownIcon /> 
               <div>Negative Tweets</div>
-              <BasicModal
+              <GuideModal
               title = {modalInfo.negativeTweet.title}
               message = {modalInfo.negativeTweet.message}
               />
@@ -152,7 +152,7 @@ const TwitterSection = ({
             <Stack spacing={1} direction="row">
               <ThumbUpIcon /> 
               <div>Positive Tweets</div>
-              <BasicModal
+              <GuideModal
                 title = {modalInfo.positiveTweet.title}
                 message = {modalInfo.positiveTweet.message}
               />

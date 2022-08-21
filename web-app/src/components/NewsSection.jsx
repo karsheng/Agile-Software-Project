@@ -11,7 +11,7 @@ import SectionTitle from "./SectionTitle";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import NewsTable from "./NewsTable";
-import BasicModal from "./Modal";
+import GuideModal from "./Modal";
 import { modalInfo } from "../config";
 
 const NewsSection = ({
@@ -96,7 +96,7 @@ const NewsSection = ({
           <Stack sx={{ mb: 2 }} spacing={1} direction="row">
             <NewspaperIcon fontSize="large" /> 
             <div>News Section</div>
-            <BasicModal
+            <GuideModal
               title = {modalInfo.newsSection.title}
               message = {modalInfo.newsSection.message}
             />

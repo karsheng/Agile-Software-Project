@@ -37,7 +37,7 @@ const page404 = () => {
           color="text.secondary"
           component="p"
         >
-          <img src="/imgs/error.jpeg"/>
+          <img src="/imgs/error.jpeg" alt="Error 404 icon"/>
         </div>
       </Container>
       {/* End hero unit */}
