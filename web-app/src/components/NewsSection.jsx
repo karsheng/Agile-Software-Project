@@ -11,6 +11,8 @@ import SectionTitle from "./SectionTitle";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import NewsTable from "./NewsTable";
+import GuideModal from "./Modal";
+import { modalInfo } from "../config";
 
 const NewsSection = ({
   sentimentData,
@@ -92,7 +94,12 @@ const NewsSection = ({
       <Grid item xs={12}>
         <SectionTitle typoComponent="h1" variant="h4">
           <Stack sx={{ mb: 2 }} spacing={1} direction="row">
-            <NewspaperIcon fontSize="large" /> <div>News Section</div>
+            <NewspaperIcon fontSize="large" /> 
+            <div>News Section</div>
+            <GuideModal
+              title = {modalInfo.newsSection.title}
+              message = {modalInfo.newsSection.message}
+            />
           </Stack>
         </SectionTitle>
         <Stack sx={{ mb: 2 }} spacing={1} direction="row">
