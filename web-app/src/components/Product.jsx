@@ -23,6 +23,8 @@ import NewspaperIcon from "@mui/icons-material/Newspaper";
 import TwitterSection from "../components/TwitterSection";
 import SectionTitle from "../components/SectionTitle";
 import NewsSection from "../components/NewsSection";
+import GuideModal from "../components/Modal";
+import { modalInfo } from "../config";
 
 const Product = ({ productList, productType }) => {
   const [metrics, setMetrics] = useState({});
@@ -295,11 +297,19 @@ const Product = ({ productList, productType }) => {
         <Button onClick={getData} size="large" variant="contained">
           Get Data
         </Button>
+        <GuideModal
+          title={modalInfo.dataSelector.title}
+          message={modalInfo.dataSelector.message}
+        />
       </Stack>
       <SectionTitle typoComponent="h1" variant="h4">
         <Stack sx={{ mb: 2 }} spacing={1} direction="row">
           <AnalyticsIcon fontSize="large" />
           <div> Key Metrics</div>
+          <GuideModal
+            title={modalInfo.keyMetrics.title}
+            message={modalInfo.keyMetrics.message}
+          />
         </Stack>
       </SectionTitle>
       <Grid container spacing={3}>
@@ -384,6 +394,10 @@ const Product = ({ productList, productType }) => {
                   size={36}
                 />
                 <span>{productName} Price & Sentiments</span>
+                <GuideModal
+                  title={modalInfo.priceAndSentiment.title}
+                  message={modalInfo.priceAndSentiment.message}
+                />
               </Stack>
             </SectionTitle>
           </Grid>
