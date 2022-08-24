@@ -37,17 +37,18 @@ def get_product_price_viz():
     try:
         args = request.args
         product = args.get('product')
+        product_type = args.get('productType')
         start = args.get('start')
         end = args.get('end')
 
         ref1 = db.reference(
-            f'cryptos/{product}/prices').order_by_child('date').start_at(start).end_at(end)
+            f'{product_type}/{product}/prices').order_by_child('date').start_at(start).end_at(end)
 
         ref2 = db.reference(
-            f'cryptos/{product}/polarity').order_by_child('date').start_at(start).end_at(end)
+            f'{product_type}/{product}/polarity').order_by_child('date').start_at(start).end_at(end)
 
         ref3 = db.reference(
-            f'cryptos/{product}/news_polarity').order_by_child('date').start_at(start).end_at(end)
+            f'{product_type}/{product}/news_polarity').order_by_child('date').start_at(start).end_at(end)
 
         prices = pd.DataFrame(ref1.get().values())
         if prices.shape[0] > 0:
@@ -84,11 +85,12 @@ def get_tweets_sentiment_viz():
     try:
         args = request.args
         product = args.get('product')
+        product_type = args.get('productType')
         start = args.get('start')
         end = args.get('end')
 
         ref = db.reference(
-            f'cryptos/{product}/tweets').order_by_child('date').start_at(start).end_at(end)
+            f'{product_type}/{product}/tweets').order_by_child('date').start_at(start).end_at(end)
 
         df = pd.DataFrame(ref.get().values())
         df['date'] = pd.to_datetime(df['date'])
@@ -113,11 +115,12 @@ def get_news_sentiment_viz():
     try:
         args = request.args
         product = args.get('product')
+        product_type = args.get('productType')
         start = args.get('start')
         end = args.get('end')
 
         ref = db.reference(
-            f'cryptos/{product}/news').order_by_child('date').start_at(start).end_at(end)
+            f'{product_type}/{product}/news').order_by_child('date').start_at(start).end_at(end)
 
         df = pd.DataFrame(ref.get().values())
         df['date'] = pd.to_datetime(df['date'])
@@ -140,43 +143,66 @@ def get_metrics():
     try:
         args = request.args
         product = args.get('product')
+        product_type = args.get('productType')
 
-        # price
-        ref1 = db.reference(
-            f'cryptos/{product}/prices').order_by_child('date').limit_to_last(7)
-        prices = pd.DataFrame(ref1.get().values())
-        new_price, old_price = prices['price (USD)'].iloc[-1], prices['price (USD)'].iloc[0]
-        price_pct = new_price/old_price*100 if old_price != 0 else 0
+        try:
+            # price
+            ref1 = db.reference(
+                f'{product_type}/{product}/prices').order_by_child('date').limit_to_last(7).get()
+            if type(ref1) != list:
+                ref1 = list(ref1.values())
+            prices = pd.DataFrame(ref1)
+            new_price, old_price = prices['price (USD)'].iloc[-1], prices['price (USD)'].iloc[0]
+            price_pct = new_price/old_price*100 if old_price != 0 else 0
+            price_pct = f'{price_pct:.1f}'
+        except:
+            new_price = None
+            price_pct = None
 
-        # tweets
-        ref2 = db.reference(
-            f'cryptos/{product}/polarity').order_by_child('date').limit_to_last(7)
-        tweets_polarity = pd.DataFrame(ref2.get().values())
-        new_tpolarity, old_tpolarity = tweets_polarity['weighted_polarity'].iloc[
-            -1], tweets_polarity['weighted_polarity'].iloc[0]
-        tpolarity_pct = new_tpolarity/old_tpolarity*100 if old_tpolarity != 0 else 0
+        try:    
+            # tweets
+            ref2 = db.reference(
+                f'{product_type}/{product}/polarity').order_by_child('date').limit_to_last(7).get()
+            if type(ref2) != list:
+                ref2 = list(ref2.values())
+            tweets_polarity = pd.DataFrame(ref2)
+            new_tpolarity, old_tpolarity = tweets_polarity['weighted_polarity'].iloc[
+                -1], tweets_polarity['weighted_polarity'].iloc[0]
+            tpolarity_pct = new_tpolarity/old_tpolarity*100 if old_tpolarity != 0 else 0
+            new_tpolarity = f'{new_tpolarity:.2f}'
+            tpolarity_pct = f'{tpolarity_pct:.1f}'
+        except:
+            new_tpolarity = None
+            tpolarity_pct = None
 
-        # news
-        ref3 = db.reference(
-            f'cryptos/{product}/news_polarity').order_by_child('date').limit_to_last(7)
-        news_polarity = pd.DataFrame(ref3.get().values())
-
-        new_npolarity, old_npolarity = news_polarity['polarity'].iloc[
-            -1], news_polarity['polarity'].iloc[0]
-        npolarity_pct = new_npolarity/old_npolarity*100 if old_npolarity != 0 else 0
+        try:
+            # news
+            ref3 = db.reference(
+                f'{product_type}/{product}/news_polarity').order_by_child('date').limit_to_last(7).get()
+            if type(ref3) != list:
+                ref3 = list(ref3.values())
+            news_polarity = pd.DataFrame(ref3)
+            new_npolarity, old_npolarity = news_polarity['polarity'].iloc[
+                -1], news_polarity['polarity'].iloc[0]
+            npolarity_pct = new_npolarity/old_npolarity*100 if old_npolarity != 0 else 0
+            new_npolarity = f'{new_npolarity:.2f}'
+            npolarity_pct = f'{npolarity_pct:.1f}'
+        except:
+            new_npolarity = None
+            npolarity_pct = None
 
         return {
             'prices': {
                 'currentValue': new_price,
-                'percentage': f'{price_pct:.1f}'
+                'percentage': price_pct
             },
             'tweets': {
-                'currentValue': f'{new_tpolarity:.2f}',
-                'percentage': f'{tpolarity_pct:.1f}'
+                'currentValue': new_tpolarity,
+                'percentage': tpolarity_pct
             },
             'news': {
-                'currentValue': f'{new_npolarity:.2f}',
-                'percentage': f'{npolarity_pct:.1f}'
+                'currentValue': new_npolarity,
+                'percentage': npolarity_pct
             }
         }
     except Exception as e:

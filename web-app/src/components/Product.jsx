@@ -147,7 +147,7 @@ const Product = ({ productList, productType }) => {
       setMetricsLoading(true);
 
       fetch(
-        `/api/price_viz?product=${product}&start=${startString}&end=${endString}`,
+        `/api/price_viz?product=${product}&productType=${productType}&start=${startString}&end=${endString}`,
         {
           headers: headers,
         }
@@ -171,7 +171,7 @@ const Product = ({ productList, productType }) => {
         });
 
       fetch(
-        `/api/tweets_sentiment?product=${product}&start=${startString}&end=${endString}`,
+        `/api/tweets_sentiment?product=${product}&productType=${productType}&start=${startString}&end=${endString}`,
         {
           headers: headers,
         }
@@ -190,7 +190,7 @@ const Product = ({ productList, productType }) => {
         });
 
       fetch(
-        `/api/news_sentiment?product=${product}&start=${startString}&end=${endString}`,
+        `/api/news_sentiment?product=${product}&productType=${productType}&start=${startString}&end=${endString}`,
         {
           headers: headers,
         }
@@ -212,7 +212,7 @@ const Product = ({ productList, productType }) => {
           setNewsLoading(false);
         });
 
-      fetch(`/api/metrics?product=${product}`, {
+      fetch(`/api/metrics?product=${product}&productType=${productType}`, {
         headers: headers,
       })
         .then((res) => res.json())
@@ -233,8 +233,10 @@ const Product = ({ productList, productType }) => {
     let currentValue = "-";
     let percentage = "-";
     if (data) {
-      currentValue = data.currentValue;
-      percentage = data.percentage;
+      if (data.currentValue) {
+        currentValue = data.currentValue;
+        percentage = data.percentage;
+      }
     }
     return {
       title,
@@ -250,13 +252,17 @@ const Product = ({ productList, productType }) => {
   };
 
   const sentimentCategory = (value) => {
-    if (value < -0.33) {
-      return `Negative (${value})`;
-    } else if (value >= -0.33 && value <= 0.33) {
-      return `Neutral (${value})`;
-    } else {
-      return `Positive (${value})`;
+    if (value) {
+      if (value < -0.33) {
+        return `Negative (${value})`;
+      } else if (value >= -0.33 && value <= 0.33) {
+        return `Neutral (${value})`;
+      } else if (value > 0.33) {
+        return `Positive (${value})`;
+      }
     }
+
+    return "-";
   };
 
   useEffect(() => {

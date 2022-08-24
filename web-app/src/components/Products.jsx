@@ -70,7 +70,7 @@ const Products = ({ productList, title, productType }) => {
                   p: 7,
                 }}
                 image={`/${productType}/${product}.png`}
-                alt="random"
+                alt={product}
               />
               <CardContent sx={{ flexGrow: 1 }}>
                 <Typography gutterBottom variant="h6" component="h2">

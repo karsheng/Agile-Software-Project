@@ -13,6 +13,9 @@ export const cryptoList = {
   shib: { fullName: "Shiba Inu", disabled: false },
 };
 export const stockList = {
-  appl: { fullName: "Apple", disabled: false },
+  aapl: { fullName: "Apple", disabled: false },
   goog: { fullName: "Google", disabled: false },
+  msft: { fullName: "Microsoft", disabled: false },
+  ba: { fullName: "Boeing", disabled: false },
+  ibm: { fullName: "IBM", disabled: false },
 };
