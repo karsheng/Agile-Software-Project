@@ -17,6 +17,7 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Copyright from "../components/Copyright";
 import Logo from "../components/Logo";
+import { REDIRECT } from "../constants.js";
 
 const theme = createTheme();
 
@@ -29,7 +30,7 @@ const Login = ({ history }) => {
         await app
           .auth()
           .signInWithEmailAndPassword(email.value, password.value);
-        history.push("/products");
+        history.push(REDIRECT);
       } catch (error) {
         alert(error);
       }
@@ -40,7 +41,7 @@ const Login = ({ history }) => {
   const { currentUser } = useContext(AuthContext);
 
   if (currentUser) {
-    return <Redirect to="/products" />;
+    return <Redirect to={REDIRECT} />;
   }
 
   return (

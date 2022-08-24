@@ -5,19 +5,25 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import { AuthProvider } from "./Auth";
 import PrivateRoute from "./PrivateRoute";
-import Product from "./pages/Product";
 import Page404 from "./pages/Page404";
-import Products from "./pages/Products";
+import CryptoList from "./pages/CryptoList";
+import CryptoDashboard from "./pages/CryptoDashboard";
+import StockList from "./pages/StockList";
+import StockDashboard from "./pages/StockDashboard";
 import Home from "./pages/Home";
 import ForgetPassword from "./pages/ForgetPassword";
+import WatchList from "./pages/WatchList";
 
 const App = () => {
   return (
     <AuthProvider>
       <Router>
         <Switch>
-          <PrivateRoute exact path="/product/:id" component={Product} />
-          <PrivateRoute exact path="/products" component={Products} />
+          <PrivateRoute exact path="/cryptos/:id" component={CryptoDashboard} />
+          <PrivateRoute exact path="/cryptos" component={CryptoList} />
+          <PrivateRoute exact path="/stocks/:id" component={StockDashboard} />
+          <PrivateRoute exact path="/stocks" component={StockList} />
+          <PrivateRoute exact path="/watchlist" component={WatchList} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/forget" component={ForgetPassword} />
           <Route exact path="/signup" component={SignUp} />

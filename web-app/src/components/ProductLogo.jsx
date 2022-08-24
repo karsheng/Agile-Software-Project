@@ -1,12 +1,12 @@
 import React from "react";
 import Avatar from "@mui/material/Avatar";
 
-const ProductLogo = ({ size, productName, product }) => {
+const ProductLogo = ({ size, productName, product, productType }) => {
   return (
     <Avatar
       sx={{ width: size, height: size }}
       alt={productName}
-      src={`/cryptos/${product}.png`}
+      src={`/${productType}/${product}.png`}
     />
   );
 };

@@ -8,7 +8,7 @@ const SectionTitle = ({ children, typoComponent, variant }) => {
       variant={variant}
       color="inherit"
       noWrap
-      sx={{ flexGrow: 1, p: 1 }}
+      sx={{ flexGrow: 1, p: 1, mt: 2 }}
     >
       {children}
     </Typography>

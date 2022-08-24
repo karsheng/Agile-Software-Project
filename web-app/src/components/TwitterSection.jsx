@@ -20,6 +20,7 @@ const TwitterSection = ({
   toDate,
   product,
   productName,
+  productType,
   sentimentLoading,
   layout,
 }) => {
@@ -73,6 +74,7 @@ const TwitterSection = ({
               <ProductLogo
                 product={product}
                 productName={productName}
+                productType={productType}
                 size={30}
               />
               <span>{` ${productName} from ${fromDate.substring(
