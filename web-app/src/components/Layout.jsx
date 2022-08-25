@@ -2,8 +2,6 @@ import React, { useState, useContext } from "react";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import Badge from "@mui/material/Badge";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import Divider from "@mui/material/Divider";
 import Box from "@mui/material/Box";
@@ -64,12 +62,6 @@ const Layout = ({ title, children }) => {
               <MenuIcon />
             </IconButton>
             {title}
-            {/* <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton> */}
-
             {currentUser ? (
               <>
                 <Button

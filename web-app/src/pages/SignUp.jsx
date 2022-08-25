@@ -16,6 +16,7 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Copyright from "../components/Copyright";
 import Logo from "../components/Logo";
+import { REDIRECT } from "../constants";
 
 const theme = createTheme();
 
@@ -43,7 +44,7 @@ const SignUp = ({ history }) => {
                   alert(error);
                 } else {
                   // Data saved successfully!
-                  history.push("/products");
+                  history.push(REDIRECT);
                 }
               }
             );
