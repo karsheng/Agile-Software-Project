@@ -30,7 +30,7 @@ const GuideModal = (props) => {
   return (
     <div>
       <Button onClick={handleOpen} sx={{top: "-5%"}}>
-        <HelpOutlinedIcon fontSize="medium" sx={{color: "black"}}/>
+        <HelpOutlinedIcon fontSize="small" sx={{color: "black"}}/>
       </Button>
       <Modal
         open={open}

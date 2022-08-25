@@ -9,8 +9,11 @@ import Typography from "@mui/material/Typography";
 import Layout from "../components/Layout";
 import Switch from "@mui/material/Switch";
 import { Link } from "react-router-dom";
+import GuideModal from "../components/Modal";
+import { modalInfo } from "../config";
 import { AuthContext } from "../Auth.js";
 import app from "../base";
+
 
 const Products = ({ productList, title, productType }) => {
   const products = Object.keys(productList);
@@ -79,7 +82,7 @@ const Products = ({ productList, title, productType }) => {
                   } - ${product.toUpperCase()}`}
                 </Typography>
               </CardContent>
-              <CardActions sx={{ p: 2 }}>
+              <CardActions sx={{ p: 3 }}>
                 Add to Watchlist
                 <Switch
                   checked={selected.has(product)}
@@ -90,6 +93,10 @@ const Products = ({ productList, title, productType }) => {
                 <Button component={Link} to={`/${productType}/${product}`}>
                   View
                 </Button>
+                <GuideModal
+                title = {modalInfo.productCard.title}
+                message = {modalInfo.productCard.message}
+                />
               </CardActions>
             </Card>
           </Grid>
