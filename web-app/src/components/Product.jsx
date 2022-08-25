@@ -416,6 +416,26 @@ const Product = ({ productList, productType }) => {
               flexDirection: "column",
             }}
           >
+            <Typography
+              component="h2"
+              variant="h5"
+              color="inherit"
+              noWrap
+              sx={{ flexGrow: 1 }}
+            >
+              <Stack direction="row" spacing={1}>
+                <ProductLogo
+                  product={product}
+                  productName={productName}
+                  productType={productType}
+                  size={30}
+                />
+                <span>{` ${productName} Price & Daily Average Sentiments from ${fromDate.substring(
+                  0,
+                  10
+                )} - ${toDate.substring(0, 10)}`}</span>
+              </Stack>
+            </Typography>
             {priceData.data && !priceLoading ? (
               <Plot
                 data={priceData.data}
