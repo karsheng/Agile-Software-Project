@@ -81,11 +81,24 @@ const newsSectionMsg = () => {
   </div>;
 };
 
+const watchListMsg = () => {
+  return <div>
+      <p>Welcome to the watchlist. This page keeps track of all your favorite
+        stocks and cryptocurrencies you wish to track. Click on stocks or 
+        cryptos to head to that page. On either of those pages clink on Add to 
+        Watchlist Slider. This will add it to your watch list that can be on the
+        watchlish page</p>
+      <img
+        src="/imgs/guides/watchlist.png"
+        alt="An image displaying how to add products in watchlist"
+      />
+  </div>
+};
 
 export const modalInfo = {
        productCard:{
         title: "Product Card",
-        message: "This is a product card containing the name and icon of the product. For more details, click on 'View' and find out what tweets and news articles are saying about the product. If you wish to add this product in your favourites list, press the switch that says 'Add to watchlist'."
+        message: "This is a product card containing the name and icon of the product. For more details, click on 'View' and find out what tweets and news articles are saying about the product. If you wish to add/remove this product in your favourites list, press the switch that says 'Add to watchlist'."
        },
 
        dataSelector : {
@@ -121,5 +134,10 @@ export const modalInfo = {
        newsSection: {
         title: "Section for News Data",
         message: newsSectionMsg()
+       },
+
+       watchList: {
+        title: "Watchlist",
+        message: watchListMsg()
        }
 }

@@ -10,6 +10,8 @@ import Switch from "@mui/material/Switch";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../Auth.js";
 import app from "../base";
+import GuideModal from "../components/Modal";
+import { modalInfo } from "../config";
 
 const ProductGrid = ({ productList, productType, showAll }) => {
   const { currentUser } = useContext(AuthContext);
@@ -80,7 +82,7 @@ const ProductGrid = ({ productList, productType, showAll }) => {
               {`${productList[product].fullName} - ${product.toUpperCase()}`}
             </Typography>
           </CardContent>
-          <CardActions sx={{ p: 2 }}>
+          <CardActions sx={{ p: 3 }}>
             Add to Watchlist
             <Switch
               checked={selected.has(product)}
@@ -96,6 +98,10 @@ const ProductGrid = ({ productList, productType, showAll }) => {
             >
               View
             </Button>
+            <GuideModal
+                title = {modalInfo.productCard.title}
+                message = {modalInfo.productCard.message}
+            />
           </CardActions>
         </Card>
       </Grid>
