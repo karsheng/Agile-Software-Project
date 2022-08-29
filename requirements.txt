@@ -9,6 +9,6 @@ pyrebase
 jwt
 firebase-admin
 textblob
+mailchimp-transactional
 scipy
  matplotlib
- 
