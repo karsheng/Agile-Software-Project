@@ -1,0 +1,6 @@
+(Microsoft OR MSFT) (#stocks)
+(Apple OR AAPL) (#stocks)
+IBM (#stocks)
+(Boeing OR BA) (#stocks)
+(Goolge OR GOOGL) (#stocks)
+(Chevron OR CVX) (#stocks)
