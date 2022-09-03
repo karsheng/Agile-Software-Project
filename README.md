@@ -1,4 +1,4 @@
-# Agile-Software-Project
+# Agile-Software-Project - Money Mood
 
 ## Set up virtual environment and install dependencies
 
