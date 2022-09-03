@@ -9,7 +9,7 @@ export const cryptoList = {
   xrp: { fullName: "XRP", disabled: false },
   sol: { fullName: "Solana", disabled: false },
   doge: { fullName: "Dogecoin", disabled: false },
-  dot: { fullName: "Polkadot", disabled: true },
+  dot: { fullName: "Polkadot", disabled: false },
   shib: { fullName: "Shiba Inu", disabled: false },
 };
 export const stockList = {
